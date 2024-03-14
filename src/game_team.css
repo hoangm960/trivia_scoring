@@ -1,0 +1,123 @@
+.container {
+    width: 100%;
+    height: 100%;
+    padding: 50px 5px 20px;
+    background: #FFF9FE;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.team-info {
+    width: 368px;
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.team-name, .question, .question-number {
+    height: 46px;
+    text-align: center;
+    font-size: 24px;
+    font-family: 'Montserrat';
+    word-wrap: break-word;
+}
+
+.team-name {
+    width: 170px;
+    color: #8B5FBF;
+    font-weight: 600;
+}
+
+.question {
+    width: 117px;
+    color: #392F5A;
+    font-weight: 500;
+}
+
+.question-number {
+    width: 61px;
+    color: black;
+    font-weight: 400;
+}
+
+.question-container {
+    padding-bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 100px;
+}
+
+.question-text {
+    width: 340px;
+    text-align: center;
+    color: #392F5A;
+    font-size: 36px;
+    font-family: 'Montserrat';
+    font-weight: 600;
+    word-wrap: break-word;
+}
+
+.answers {
+    padding: 30px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+}
+
+.answer-row {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 140px;
+}
+
+input[type="radio"] + label {
+    padding: 18px 20px;
+    background: #8B5FBF;
+    border-radius: 20px;
+    border: 4px #392F5A solid;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+    color: #FFF9FE;
+    font-size: 35px;
+    font-family: 'Montserrat';
+    font-weight: 700;
+    word-wrap: break-word;
+}
+
+input[type="radio"]:checked + label {
+    background: red;
+    border: 4px #8B5FBF solid;
+}
+
+.answer-text {
+    color: #FFF9FE;
+    font-size: 35px;
+    font-family: 'Montserrat';
+    font-weight: 700;
+    word-wrap: break-word;
+}
+
+input[type="radio"] {
+    display: none;
+  }
+
+.submit {
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+    padding: 18px 20px;
+    margin-top: 20px;
+    background: #8B5FBF;
+    border-radius: 20px;
+    border: 4px #392F5A solid;
+}
