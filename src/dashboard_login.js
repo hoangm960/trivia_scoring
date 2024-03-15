@@ -34,7 +34,7 @@ const DashboardLogin = () => {
                                 <div>Password</div>
                             </div>
                         </div>
-                        <input className="input" placeholder="Enter password here"/>
+                        <input type="password" className="input" placeholder="Enter password here"/>
                     </div>
                 </div>
                 <div className="button" onClick={handleLogin}>

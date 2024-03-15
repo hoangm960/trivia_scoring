@@ -27,7 +27,9 @@ const GameTeam = () => {
                             <input type="radio" id="choiceD" name="choices"/>
                             <label htmlFor="choiceD" className="answer">D</label>
                         </div>
-                        <button className="submit">Submit</button>
+                        <button className="submit">
+                            <div>Submit</div>
+                        </button>
                     </form>
                 </div>
             </div>
