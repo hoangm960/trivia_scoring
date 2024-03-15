@@ -14,7 +14,7 @@ const DashboardLogin = () => {
 
     return (
         <>
-            <div className="container">
+            <div className="container1">
                 <div className="title">
                     <span>Trivia</span>
                     <span>Scoring</span>
