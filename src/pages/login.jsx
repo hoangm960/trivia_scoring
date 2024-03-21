@@ -1,16 +1,33 @@
-import React from 'react';
+import { React } from 'react';
 import { useHistory } from 'react-router-dom';
 import './style/dashboard_login.css';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
+
 
 const LoginPage = () => {
     const history = useHistory();
 
-    const handleLogin = () => {
-        // Perform any login logic here
+    const handleLogin = async () => {
+        const uid = document.getElementById("uid").value;
+        if (uid === "") {
+            alert("Please enter a valid ID");
+            return;
+        }
+        const password = document.getElementById("password").value;
+        const docRef = doc(db, "scorer", uid);
+        const docSnap = await getDoc(docRef);
 
-        // Then navigate to the GameTeam route
-        history.push('/game_team');
-    };
+        if (docSnap.exists()) {
+            if (docSnap.get("password") === password) {
+                history.push('/game_team');
+            } else {
+                alert("Wrong Password");
+            }
+        } else {
+            alert("Wrong ID");
+        }
+    }
 
     return (
         <>
@@ -26,7 +43,7 @@ const LoginPage = () => {
                                 <div>ID</div>
                             </div>
                         </div>
-                        <input className="input" placeholder='Enter UID here' />
+                        <input id='uid' className="input" placeholder='Enter UID here' />
                     </div>
                     <div className="input-field">
                         <div className="input-label">
@@ -34,7 +51,7 @@ const LoginPage = () => {
                                 <div>Password</div>
                             </div>
                         </div>
-                        <input type="password" className="input" placeholder="Enter password here"/>
+                        <input id='password' type="password" className="input" placeholder="Enter password here" />
                     </div>
                 </div>
                 <div className="button" onClick={handleLogin}>
