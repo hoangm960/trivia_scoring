@@ -1,5 +1,5 @@
 import React from 'react';
-import './game_team.css';
+import './style/game_team.css';
 
 const GameTeam = () => {
     return (

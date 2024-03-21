@@ -1,6 +1,6 @@
-import './App.css';
+import './style/App.css';
 import DashboardLogin from './dashboard_login';
-import GameTeam from './game_team';  
+import GameTeam from './game_team';
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 

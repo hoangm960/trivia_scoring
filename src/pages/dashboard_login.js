@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import './dashboard_login.css';
+import './style/dashboard_login.css';
 
 const DashboardLogin = () => {
     const history = useHistory();
