@@ -17,7 +17,9 @@
     align-items: flex-start;
 }
 
-.team-name, .question, .question-number {
+.team-name,
+.question,
+.question-number {
     height: 46px;
     text-align: center;
     font-size: 24px;
@@ -77,7 +79,7 @@
     gap: 100px;
 }
 
-input[type="radio"] + label {
+input[type="radio"]+label {
     padding: 20px 20px;
     background: #8B5FBF;
     border-radius: 20px;
@@ -93,14 +95,14 @@ input[type="radio"] + label {
     word-wrap: break-word;
 }
 
-input[type="radio"]:checked + label {
+input[type="radio"]:checked+label {
     background: red;
     border: 4px #8B5FBF solid;
 }
 
 input[type="radio"] {
     display: none;
-  }
+}
 
 .submit {
     display: inline-flex;

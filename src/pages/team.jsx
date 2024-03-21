@@ -1,7 +1,8 @@
 import React from 'react';
 import './style/game_team.css';
 
-const GameTeam = () => {
+
+const TeamPage = () => {
     return (
         <>
             <div className="container">
@@ -16,15 +17,15 @@ const GameTeam = () => {
                     <div className="question-text">What answer did the team choose?</div>
                     <form className="answers">
                         <div className="answer-row">
-                            <input type="radio" id="choiceA" name="choices"/>
+                            <input type="radio" id="choiceA" name="choices" />
                             <label htmlFor="choiceA" className="answer">A</label>
-                            <input type="radio" id="choiceB" name="choices"/>
+                            <input type="radio" id="choiceB" name="choices" />
                             <label htmlFor="choiceB" className="answer">B</label>
                         </div>
                         <div className="answer-row">
-                        <input type="radio" id="choiceC" name="choices"/>
+                            <input type="radio" id="choiceC" name="choices" />
                             <label htmlFor="choiceC" className="answer">C</label>
-                            <input type="radio" id="choiceD" name="choices"/>
+                            <input type="radio" id="choiceD" name="choices" />
                             <label htmlFor="choiceD" className="answer">D</label>
                         </div>
                         <button className="submit">
@@ -37,4 +38,4 @@ const GameTeam = () => {
     );
 };
 
-export default GameTeam;
+export default TeamPage;

@@ -2,7 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import './style/dashboard_login.css';
 
-const DashboardLogin = () => {
+const LoginPage = () => {
     const history = useHistory();
 
     const handleLogin = () => {
@@ -45,4 +45,4 @@ const DashboardLogin = () => {
     );
 };
 
-export default DashboardLogin;
+export default LoginPage;
