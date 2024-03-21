@@ -4,6 +4,8 @@ import './style/login.css';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { LoginInput } from '../components/login_input';
+import { Button } from '../components/button';
+import ArrowRightIcon from '../assets/arrow-right.png';
 
 
 const LoginPage = () => {
@@ -32,17 +34,15 @@ const LoginPage = () => {
 
     return (
         <div className="container1">
-            <div className="title">
+            <p className="title">
                 <span>Trivia</span>
                 <span>Scoring</span>
-            </div>
+            </p>
             <div className="form">
                 <LoginInput id='uid' placeHolder='Enter UID here' title='ID' />
                 <LoginInput id='password' placeHolder='Enter password here' title='Password' isPassword={true} />
             </div>
-            <div className="button" onClick={handleLogin}>
-                <div>Login</div>
-            </div>
+            <Button text='Login' icon={ArrowRightIcon} onClick={handleLogin}></Button>
         </div>
     );
 };
