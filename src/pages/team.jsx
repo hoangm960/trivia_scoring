@@ -1,5 +1,5 @@
 import React from 'react';
-import './style/game_team.css';
+import './style/team.css';
 
 
 const TeamPage = () => {

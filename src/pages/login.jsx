@@ -1,8 +1,9 @@
 import { React } from 'react';
 import { useHistory } from 'react-router-dom';
-import './style/dashboard_login.css';
+import './style/login.css';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { LoginInput } from '../components/login_input';
 
 
 const LoginPage = () => {
@@ -30,35 +31,19 @@ const LoginPage = () => {
     }
 
     return (
-        <>
-            <div className="container1">
-                <div className="title">
-                    <span>Trivia</span>
-                    <span>Scoring</span>
-                </div>
-                <div className="form">
-                    <div className="input-field">
-                        <div className="input-label">
-                            <div>
-                                <div>ID</div>
-                            </div>
-                        </div>
-                        <input id='uid' className="input" placeholder='Enter UID here' />
-                    </div>
-                    <div className="input-field">
-                        <div className="input-label">
-                            <div>
-                                <div>Password</div>
-                            </div>
-                        </div>
-                        <input id='password' type="password" className="input" placeholder="Enter password here" />
-                    </div>
-                </div>
-                <div className="button" onClick={handleLogin}>
-                    <div>Login</div>
-                </div>
+        <div className="container1">
+            <div className="title">
+                <span>Trivia</span>
+                <span>Scoring</span>
             </div>
-        </>
+            <div className="form">
+                <LoginInput id='uid' placeHolder='Enter UID here' title='ID' />
+                <LoginInput id='password' placeHolder='Enter password here' title='Password' isPassword={true} />
+            </div>
+            <div className="button" onClick={handleLogin}>
+                <div>Login</div>
+            </div>
+        </div>
     );
 };
 
