@@ -3,7 +3,9 @@ import { useReducer } from "react";
 import "./style/button.css";
 
 export const Button = ({
+    id,
     text,
+    inputType="button",
     type,
     icon,
     stateProp,
@@ -16,7 +18,9 @@ export const Button = ({
 
     return (
         <button
+            id={id}
             className={`button ${state.state}`}
+            type={inputType}
             onMouseLeave={() => {
                 dispatch("mouse_leave");
             }}
