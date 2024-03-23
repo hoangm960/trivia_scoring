@@ -2,9 +2,17 @@ import React from 'react';
 import './style/team.css';
 import { Button } from '../components/button';
 import CheckIcon from '../assets/check.png';
+import { Answer } from '../components/radio_answer';
 
 
 const TeamPage = () => {
+    // TODO: handle question number in realtime
+
+    const handleSubmit = () => {
+        // TODO: add code to submit the team. Evaluate score and update score to database.
+        alert("Submitted");
+    }
+
     return (
         <div className="container">
             <div className="team-info">
@@ -18,14 +26,14 @@ const TeamPage = () => {
                 <div className="question-text">What answer did the team choose?</div>
                 <form className="answers">
                     <div className="answer-row">
-                        <Button inputType="radio" id="choiceA" text="A"></Button>
-                        <Button inputType="radio" id="choiceB" text="B"></Button>
+                        <Answer id={"choiceA"} text={"A"} />
+                        <Answer id={"choiceB"} text={"B"} />
                     </div>
                     <div className="answer-row">
-                        <Button inputType="radio" id="choiceC" text="C"></Button>
-                        <Button inputType="radio" id="choiceD" text="D"></Button>
+                        <Answer id={"choiceC"} text={"C"} />
+                        <Answer id={"choiceD"} text={"D"} />
                     </div>
-                    <Button text="Submit" icon={CheckIcon} type="submit"></Button>
+                    <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleSubmit}></Button>
                 </form>
             </div>
         </div>

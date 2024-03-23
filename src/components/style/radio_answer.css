@@ -1,0 +1,20 @@
+input[type="radio"]+label {
+    padding: 20px 20px;
+    background: var(--purple);
+    border-radius: 20px;
+    border: 4px var(--dark-purple) solid;
+    color: var(--white);
+    font-size: 50px;
+    font-family: 'Montserrat';
+    font-weight: 700;
+    word-wrap: break-word;
+}
+
+input[type="radio"]:checked+label {
+    background: var(--light-pink);
+    border: 4px var(--deep-dark-purple) solid;
+}
+
+input[type="radio"] {
+    display: none;
+}
