@@ -3,17 +3,31 @@ import './style/team.css';
 import { Button } from '../components/button';
 import CheckIcon from '../assets/check.png';
 import { Answer } from '../components/radio_answer';
-import { getDoc, doc } from 'firebase/firestore';
+import { getDoc, doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 
 
-
 const TeamPage = () => {
-    const [teamName, setTeamName] = React.useState("");
-    const teamID = localStorage.getItem("team");
-    const teamRef = doc(db, "teams", teamID);
+    const [teamName, setTeamName] = React.useState("Team Name");
+
+
+    const [questionNumber, setQuestionNumber] = React.useState(0);
+
+    const onLoad = () => {
+        updateQuestionNumber();
+        updateTeamName();
+    }
+
+    const updateQuestionNumber = () => {
+        const gameRef = doc(db, "game", "2024g");
+        onSnapshot(gameRef, (doc) => {
+            setQuestionNumber(doc.data().current_index);
+        });
+    }
 
     const updateTeamName = () => {
+        const teamID = localStorage.getItem("team");
+        const teamRef = doc(db, "teams", teamID);
         getDoc(teamRef).then(
             (doc) => {
                 setTeamName(doc.data().name);
@@ -21,21 +35,20 @@ const TeamPage = () => {
         );
     }
 
-    // TODO: handle question number in realtime
-
     const handleSubmit = () => {
-        // TODO: add code to submit the team. Evaluate score and update score to database.
+        // TODO: add code to submit answer. Evaluate score and update score to database.
+
         alert("Submitted");
     }
 
 
     return (
-        <div className="container" onLoad={updateTeamName}>
+        <div className="container" onLoad={onLoad}>
             <div className="team-info">
                 <div className="team-name">{teamName}</div>
                 <div className="question-counter-container">
                     <div className="question">Question:</div>
-                    <div className="question-number">1/10</div>
+                    <div className="question-number">{questionNumber}/10</div>
                 </div>
             </div>
             <div className="question-container">
