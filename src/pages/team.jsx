@@ -3,9 +3,24 @@ import './style/team.css';
 import { Button } from '../components/button';
 import CheckIcon from '../assets/check.png';
 import { Answer } from '../components/radio_answer';
+import { getDoc, doc } from 'firebase/firestore';
+import { db } from '../firebase';
+
 
 
 const TeamPage = () => {
+    const [teamName, setTeamName] = React.useState("");
+    const teamID = localStorage.getItem("team");
+    const teamRef = doc(db, "teams", teamID);
+
+    const updateTeamName = () => {
+        getDoc(teamRef).then(
+            (doc) => {
+                setTeamName(doc.data().name);
+            }
+        );
+    }
+
     // TODO: handle question number in realtime
 
     const handleSubmit = () => {
@@ -13,10 +28,11 @@ const TeamPage = () => {
         alert("Submitted");
     }
 
+
     return (
-        <div className="container">
+        <div className="container" onLoad={updateTeamName}>
             <div className="team-info">
-                <div className="team-name">Team’s name</div>
+                <div className="team-name">{teamName}</div>
                 <div className="question-counter-container">
                     <div className="question">Question:</div>
                     <div className="question-number">1/10</div>
