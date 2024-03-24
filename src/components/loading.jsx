@@ -1,0 +1,12 @@
+import React from 'react';
+import './style/loading.css';
+
+function Loading() {
+  return (
+    <div className="loader-container">
+      <div className="loader">Loading...</div>
+    </div>
+  );
+}
+
+export default Loading;

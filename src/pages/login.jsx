@@ -23,7 +23,12 @@ const LoginPage = () => {
 
         if (docSnap.exists()) {
             if (docSnap.get("password") === password) {
-                history.push('/game_team');
+                getDoc(docSnap.data().team).then(
+                    (team) => {
+                        localStorage.setItem("team", team.id);
+                        history.push('/game_team');
+                    }
+                );
             } else {
                 alert("Wrong Password");
             }
