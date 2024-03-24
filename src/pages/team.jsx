@@ -3,7 +3,7 @@ import './style/team.css';
 import { Button } from '../components/button';
 import CheckIcon from '../assets/check.png';
 import { Answer } from '../components/radio_answer';
-import { getDoc, doc, onSnapshot, where, query, and, collection, getDocs } from 'firebase/firestore';
+import { getDoc, doc, onSnapshot, where, query, collection, getDocs, updateDoc, increment } from 'firebase/firestore';
 import { db } from '../firebase';
 
 
@@ -34,8 +34,8 @@ const TeamPage = () => {
     }
 
     const handleSubmit = async () => {
-        const correctAnswer = await getCorrectAnswer();
-        checkAnswer(correctAnswer);
+        const [correctAnswer, points] = await getCorrectAnswer();
+        checkAnswer(correctAnswer, points);
     }
 
     const getCorrectAnswer = async () => {
@@ -44,20 +44,23 @@ const TeamPage = () => {
         const currentQuestion = query(questionRef, where("game", "==", gameRef.id), where("index", "==", questionNumber));
         const questionSnap = await getDocs(currentQuestion);
         var correctAnswer = "";
+        var points = 0;
         questionSnap.forEach(doc => {
             if (doc.data() !== undefined) {
-                console.log(doc.data().answer);
                 correctAnswer = doc.data().answer;
+                points = doc.data().points;
             }
         });
-        return correctAnswer;
+        return [correctAnswer, points];
     }
 
-    const checkAnswer = (correctAnswer) => {
+    const checkAnswer = async (correctAnswer, points) => {
         const checkedID = document.querySelector('input[name=choices]:checked').id;
         const checkedValue = document.querySelector('label[for=' + checkedID + ']').textContent;
         if (checkedValue === correctAnswer) {
-            console.log(correctAnswer);
+            await updateDoc(teamRef, {
+                score: increment(points)
+            });
         }
     }
 
