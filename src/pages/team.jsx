@@ -3,15 +3,15 @@ import './style/team.css';
 import { Button } from '../components/button';
 import CheckIcon from '../assets/check.png';
 import { Answer } from '../components/radio_answer';
-import { getDoc, doc, onSnapshot } from 'firebase/firestore';
+import { getDoc, doc, onSnapshot, where, query, and, collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 
 
 const TeamPage = () => {
     const [teamName, setTeamName] = React.useState("Team Name");
-
-
     const [questionNumber, setQuestionNumber] = React.useState(0);
+    const teamID = localStorage.getItem("team");
+    const teamRef = doc(db, "teams", teamID);
 
     const onLoad = () => {
         updateQuestionNumber();
@@ -26,8 +26,6 @@ const TeamPage = () => {
     }
 
     const updateTeamName = () => {
-        const teamID = localStorage.getItem("team");
-        const teamRef = doc(db, "teams", teamID);
         getDoc(teamRef).then(
             (doc) => {
                 setTeamName(doc.data().name);
@@ -35,10 +33,32 @@ const TeamPage = () => {
         );
     }
 
-    const handleSubmit = () => {
-        // TODO: add code to submit answer. Evaluate score and update score to database.
+    const handleSubmit = async () => {
+        const correctAnswer = await getCorrectAnswer();
+        checkAnswer(correctAnswer);
+    }
 
-        alert("Submitted");
+    const getCorrectAnswer = async () => {
+        const gameRef = doc(db, "game", "2024g");
+        const questionRef = collection(db, "questions");
+        const currentQuestion = query(questionRef, where("game", "==", gameRef.id), where("index", "==", questionNumber));
+        const questionSnap = await getDocs(currentQuestion);
+        var correctAnswer = "";
+        questionSnap.forEach(doc => {
+            if (doc.data() !== undefined) {
+                console.log(doc.data().answer);
+                correctAnswer = doc.data().answer;
+            }
+        });
+        return correctAnswer;
+    }
+
+    const checkAnswer = (correctAnswer) => {
+        const checkedID = document.querySelector('input[name=choices]:checked').id;
+        const checkedValue = document.querySelector('label[for=' + checkedID + ']').textContent;
+        if (checkedValue === correctAnswer) {
+            console.log(correctAnswer);
+        }
     }
 
 
