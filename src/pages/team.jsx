@@ -12,6 +12,7 @@ const TeamPage = () => {
     const [isLoading, setIsLoading] = React.useState(false);
     const [teamName, setTeamName] = React.useState("Team Name");
     const [questionNumber, setQuestionNumber] = React.useState(0);
+    const [prevQuestionNumber, setPrevQuestionNumber] = React.useState(0);
     const [answer, setAnswer] = React.useState([]);
     const teamID = localStorage.getItem("team");
     const teamRef = doc(db, "teams", teamID);
@@ -20,7 +21,6 @@ const TeamPage = () => {
         updateTeamName();
         updateQuestionNumber();
         await getCorrectAnswer();
-        setIsLoading(false);
     }
 
     const updateQuestionNumber = async () => {
@@ -63,14 +63,20 @@ const TeamPage = () => {
                 score: increment(answer[1])
             });
             checkedAnswer.checked = false;
+            setPrevQuestionNumber(questionNumber);
         }
     }
+
+
     useEffect(() => {
         if (questionNumber !== 0) {
+            setIsLoading(true);
             onLoad();
+            setIsLoading(false);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [questionNumber]);
+        setIsLoading(prevQuestionNumber === questionNumber);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [questionNumber, prevQuestionNumber]);
 
     if (isLoading) {
         return <Loading />
