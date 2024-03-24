@@ -1,24 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './style/team.css';
 import { Button } from '../components/button';
 import CheckIcon from '../assets/check.png';
 import { Answer } from '../components/radio_answer';
 import { getDoc, doc, onSnapshot, where, query, collection, getDocs, updateDoc, increment } from 'firebase/firestore';
 import { db } from '../firebase';
+import Loading from '../components/loading';
 
 
 const TeamPage = () => {
+    const [isLoading, setIsLoading] = React.useState(false);
     const [teamName, setTeamName] = React.useState("Team Name");
     const [questionNumber, setQuestionNumber] = React.useState(0);
+    const [answer, setAnswer] = React.useState([]);
     const teamID = localStorage.getItem("team");
     const teamRef = doc(db, "teams", teamID);
 
-    const onLoad = () => {
-        updateQuestionNumber();
+    const onLoad = async () => {
         updateTeamName();
+        updateQuestionNumber();
+        await getCorrectAnswer();
+        setIsLoading(false);
     }
 
-    const updateQuestionNumber = () => {
+    const updateQuestionNumber = async () => {
         const gameRef = doc(db, "game", "2024g");
         onSnapshot(gameRef, (doc) => {
             setQuestionNumber(doc.data().current_index);
@@ -32,36 +37,43 @@ const TeamPage = () => {
             }
         );
     }
-
-    const handleSubmit = async () => {
-        const [correctAnswer, points] = await getCorrectAnswer();
-        checkAnswer(correctAnswer, points);
-    }
-
     const getCorrectAnswer = async () => {
         const gameRef = doc(db, "game", "2024g");
         const questionRef = collection(db, "questions");
+        if (questionNumber === 0)
+            return
         const currentQuestion = query(questionRef, where("game", "==", gameRef.id), where("index", "==", questionNumber));
+
         const questionSnap = await getDocs(currentQuestion);
-        var correctAnswer = "";
-        var points = 0;
+        var correctAnswer, points;
         questionSnap.forEach(doc => {
             if (doc.data() !== undefined) {
                 correctAnswer = doc.data().answer;
                 points = doc.data().points;
             }
         });
-        return [correctAnswer, points];
+        setAnswer([correctAnswer, points]);
     }
 
-    const checkAnswer = async (correctAnswer, points) => {
-        const checkedID = document.querySelector('input[name=choices]:checked').id;
-        const checkedValue = document.querySelector('label[for=' + checkedID + ']').textContent;
-        if (checkedValue === correctAnswer) {
+    const handleSubmit = async () => {
+        const checkedAnswer = document.querySelector('input[name=choices]:checked');
+        const checkedValue = document.querySelector('label[for=' + checkedAnswer.id + ']').textContent;
+        if (checkedValue === answer[0]) {
             await updateDoc(teamRef, {
-                score: increment(points)
+                score: increment(answer[1])
             });
+            checkedAnswer.checked = false;
         }
+    }
+    useEffect(() => {
+        if (questionNumber !== 0) {
+            onLoad();
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [questionNumber]);
+
+    if (isLoading) {
+        return <Loading />
     }
 
 
@@ -76,7 +88,7 @@ const TeamPage = () => {
             </div>
             <div className="question-container">
                 <div className="question-text">What answer did the team choose?</div>
-                <form className="answers">
+                <div className="answers">
                     <div className="answer-row">
                         <Answer id={"choiceA"} text={"A"} />
                         <Answer id={"choiceB"} text={"B"} />
@@ -85,8 +97,8 @@ const TeamPage = () => {
                         <Answer id={"choiceC"} text={"C"} />
                         <Answer id={"choiceD"} text={"D"} />
                     </div>
-                    <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleSubmit}></Button>
-                </form>
+                </div>
+                <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleSubmit}></Button>
             </div>
         </div>
     );
