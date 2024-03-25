@@ -6,6 +6,7 @@ import { Answer } from '../components/radio_answer';
 import { getDoc, doc, onSnapshot, where, query, collection, getDocs, updateDoc, increment } from 'firebase/firestore';
 import { db } from '../firebase';
 import Loading from '../components/loading';
+import GameOver from './game_over';
 
 
 const TeamPage = () => {
