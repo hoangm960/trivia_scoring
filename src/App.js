@@ -1,4 +1,5 @@
 import './App.css';
+import GameOver from './pages/game_over';
 import LoginPage from './pages/login';
 import TeamPage from './pages/team';
 import React from 'react';
@@ -11,6 +12,7 @@ const App = () => {
       <Switch>
         <Route exact path="/" component={LoginPage} />
         <Route path="/game_team" component={TeamPage} />
+        <Route path="/game_over" component={GameOver} />
       </Switch>
     </Router>
   );
