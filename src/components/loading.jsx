@@ -3,11 +3,7 @@ import './style/loading.css';
 
 function Loading() {
   return (
-    <>
-      <div className="loading-container">
-        <div className="loading-text">Waiting for host...</div>
-      </div>
-    </>
+    <div className="loading-text">Waiting for host...</div>
   );
 }
 

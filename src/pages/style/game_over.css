@@ -1,15 +1,18 @@
 .gameover-container {
-    padding: 0px 20px 100px 20px;
-    flex-direction: column;
+    height: 90vh;
     align-items: center;
-    display: inline-flex;
-    gap: 60px;
+    background-color: var(--white);
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    justify-content: space-around;
+    padding: 50px 5px 20px;
     position: relative;
 }
 
 .gameover-text {
     text-align: center;
-    font-size: 36px;
+    font-size: 32px;
     font-family: 'Montserrat';
     font-weight: 600;
     word-wrap: break-word;
