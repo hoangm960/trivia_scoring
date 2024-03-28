@@ -1,0 +1,107 @@
+.container {
+    height: 90vh;
+    align-items: center;
+    background-color: var(--white);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: space-around;
+    padding: 20px 5px 5px;
+    position: relative;
+}
+
+.scoreboard-title {
+    height: 46px;
+    text-align: center;
+    font-size: 40px;
+    font-weight: 600;
+    font-family: 'Montserrat';
+    word-wrap: break-word;
+    letter-spacing: 0;
+    line-height: normal;
+    position: relative;
+    color: var(--deep-dark-purple);
+}
+
+.teams-info-container {
+    width: 90%;
+    align-items: center;
+    flex-direction: row;
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    position: relative;
+}
+
+
+.teams-rank, .teams-name, .teams-score {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    gap: 10px;
+}
+
+.teams-rank {
+    width: 10%;
+}
+.teams-name {
+    width: 60%;
+}
+.teams-score {
+    width: 10%;
+}
+
+.team-info-text {
+    color: var(--Black, #0B0912);
+    text-align: center;
+    font-family: Montserrat;
+    font-size: 1.25rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.team-rank  {
+    display: flex;
+    width: 2rem;
+    min-height: 1.875rem;
+    padding: 0rem 0.625rem;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: 2.5rem;
+    border: 3px solid var(--Deep-Dark-Purple, #392F5A);
+    background: var(--Dark-Pink, #F7AEF8);
+    }
+
+
+.team-name  {
+    display: flex;
+    width: 85%;
+    min-height: 1.875rem;
+    padding: 0rem 0.625rem;
+    justify-content: center;
+    align-items: center;
+    gap: 0.625rem;
+    flex: 1 0 0;
+    
+    border-radius: 1.25rem;
+    border: 3px solid var(--Deep-Dark-Purple, #392F5A);
+    background: var(--Light-Pink, #FDC5F5);
+}
+
+.team-score  {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    min-height: 1.875rem;
+    padding: 0rem 0.625rem;
+    gap: 0.625rem;
+    flex-shrink: 0;
+
+    border-radius: 1.25rem;
+    border: 3px solid var(--Deep-Dark-Purple, #392F5A);
+    background: var(--Purple, #C989EB);
+}
+
