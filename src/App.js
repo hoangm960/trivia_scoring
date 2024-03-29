@@ -1,6 +1,5 @@
 import './App.css';
 import GameOver from './pages/game_over';
-import LoginPage from './pages/login';
 import TeamPage from './pages/team';
 import Scoreboard from './pages/scoreboard';
 import React from 'react';

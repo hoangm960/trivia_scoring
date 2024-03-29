@@ -99,7 +99,7 @@ const TeamPage = () => {
     return (
         <div className="container">
             {isLoading ?
-                <Loading /> :
+                <Loading msg="Waiting for host..."/> :
                 <>
                     <div className="team-info">
                         <div className="team-name">{teamName}</div>

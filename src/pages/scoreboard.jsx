@@ -2,8 +2,12 @@ import React, { useEffect } from 'react';
 import './style/scoreboard.css';
 import { onSnapshot, collection, query } from 'firebase/firestore';
 import { db } from '../firebase';
+import RowScoreboard from '../components/row_scoreboard';
+import Loading from '../components/loading';
 
 function Scoreboard() {
+	const [sortedTeams, setSortedTeams] = React.useState([]);
+
 	const getScoreboard = async () => {
 		const teamRef = query(collection(db, "teams"));
 		onSnapshot(teamRef, (docs) => {
@@ -11,42 +15,37 @@ function Scoreboard() {
 			docs.forEach((doc) => {
 				teams.push(doc.data());
 			});
-			const sortedTeams = teams.sort((a, b) => {
+			setSortedTeams(teams.sort((a, b) => {
 				return b.score - a.score;
-			}).map((team) => {
-				return { name: team.name, score: team.score };
-			});
-			console.log(sortedTeams);
-			return sortedTeams;
+			},).map((team, index) => {
+				return (
+					<RowScoreboard
+						index={index + 1}
+						name={team.name}
+						score={team.score}
+						key={index}
+					/>
+				);
+			}));
 		});
 	}
 
 	useEffect(() => {
 		getScoreboard();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
-    <div className="container">
-      <div className="scoreboard-title">Scoreboard</div>
-      <div className="teams-info-container">
-            <div className="team-info">
-                <div className="team-rank team-info-text">1</div>
-                <div className="team-name team-info-text">Team 1</div>
-                <div className="team-score team-info-text">150</div>
-            </div>
-            <div className="team-info">
-                <div className="team-rank team-info-text">2</div>
-                <div className="team-name team-info-text">Team 2</div>
-                <div className="team-score team-info-text">100</div>
-            </div>
-            <div className="team-info">
-                <div className="team-rank team-info-text">3</div>
-                <div className="team-name team-info-text">Team 3</div>
-                <div className="team-score team-info-text">50</div>
-            </div>
-       </div>   
-    </div>
-  );
+		<div className="container">
+			<div className="scoreboard-title">Scoreboard</div>
+			{sortedTeams.length === 0 ?
+				<Loading msg="Loading scoreboard..." /> :
+				<div className="teams-info-container">
+					{sortedTeams}
+				</div>
+			}
+		</div>
+	);
 }
 
 

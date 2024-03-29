@@ -1,9 +1,9 @@
 import React from 'react';
 import './style/loading.css';
 
-function Loading() {
+function Loading({ msg }) {
   return (
-    <div className="loading-text">Waiting for host...</div>
+    <div className="loading-text">{msg}</div>
   );
 }
 
