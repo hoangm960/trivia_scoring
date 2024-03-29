@@ -45,7 +45,7 @@
 
 
 .team-info-text {
-    color: var(--Black, #0B0912);
+    color: var(--black, #0B0912);
     text-align: center;
     font-family: Montserrat;
     font-size: 1.25rem;
@@ -63,8 +63,8 @@
     align-items: center;
     flex-shrink: 0;
     border-radius: 2.5rem;
-    border: 3px solid var(--Deep-Dark-Purple, #392F5A);
-    background: var(--Dark-Pink, #F7AEF8);
+    border: 3px solid var(--deep-dark-purple);
+    background: var(--dark-pink);
 }
 
 .team-name  {
@@ -76,10 +76,10 @@
     align-items: center;
     gap: 0.625rem;
     flex: 1 0 0;
-    
+
     border-radius: 1.25rem;
-    border: 3px solid var(--Deep-Dark-Purple, #392F5A);
-    background: var(--Light-Pink, #FDC5F5);
+    border: 3px solid var(--deep-dark-purple);
+    background: var(--light-pink);
 }
 
 .team-score  {
@@ -93,8 +93,8 @@
     flex-shrink: 0;
 
     border-radius: 1.25rem;
-    border: 3px solid var(--Deep-Dark-Purple, #392F5A);
-    background: var(--Purple, #C989EB);
+    border: 3px solid var(--deep-dark-purple);
+    background: var(--purple);
 }
 
 
