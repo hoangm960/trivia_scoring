@@ -11,7 +11,7 @@ const App = () => {
   return (
     <Router>
       <Switch>
-        <Route exact path="/" component={LoginPage } />
+        <Route exact path="/" component={Scoreboard} />
         <Route path="/game_team" component={TeamPage} />
         <Route path="/game_over" component={GameOver} />
         <Route path="/scoreboard" component={Scoreboard} />
