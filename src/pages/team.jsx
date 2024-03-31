@@ -77,6 +77,11 @@ const TeamPage = () => {
             await updateDoc(teamRef, {
                 score: increment(answers[questionNumber - 1][1])
             });
+        } else {
+            await updateDoc(teamRef, {
+                score: increment(-answers[questionNumber - 1][1])
+            });
+
         }
         if (questionNumber === answers.length) {
             history.push("/game_over");
