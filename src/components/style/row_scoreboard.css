@@ -32,7 +32,7 @@
     background: var(--dark-pink);
 }
 
-.team-name  {
+.team-name-scoreboard  {
     display: flex;
     width: 60%;
     height: 1.875rem;
