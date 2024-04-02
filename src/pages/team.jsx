@@ -21,11 +21,11 @@ const TeamPage = () => {
     const teamID = localStorage.getItem("team");
     const teamRef = doc(db, "teams", teamID);
 
-    const onLoad = () => {
+    const onLoad = async () => {
         setIsLoading(true);
         updateTeamName();
         updateQuestionNumber();
-        getCorrectAnswers();
+        await getCorrectAnswers();
     }
 
     const updateTeamName = async () => {
@@ -47,43 +47,39 @@ const TeamPage = () => {
     const getCorrectAnswers = async () => {
         const gameRef = doc(db, "game", "2024g");
         const questionRef = collection(db, "questions");
-        var tempAnswers = [];
         const questionInGameSnap = await getDocs(query(
             questionRef,
             where("game", "==", gameRef.id))
         );
-        questionInGameSnap.forEach((question) => {
+        questionInGameSnap.forEach(async (question) => {
             const currentQuestionID = question.id;
             const currentQuestionRef = doc(db, "questions", currentQuestionID);
-            var correctAnswer, points;
-            getDoc(currentQuestionRef).then(doc => {
-                if (doc.data() !== undefined) {
-                    correctAnswer = doc.data().answer;
-                    points = doc.data().points;
-                    tempAnswers.push([correctAnswer, points]);
-                }
-            });
+            const currentQuestionSnap = await getDoc(currentQuestionRef);
+            const correctAnswer = currentQuestionSnap.data().answer;
+            setAnswers(answers => [...answers, correctAnswer]);
         });
-        while (tempAnswers.length === 0) {
-            await new Promise(r => setTimeout(r, 10));
-        }
-        setAnswers(tempAnswers);
     }
 
     const handleSubmit = async () => {
         const checkedAnswer = document.querySelector('input[name=choices]:checked');
         const checkedValue = document.querySelector('label[for=' + checkedAnswer.id + ']').textContent;
-        console.log(answers[questionNumber - 1]);
-        if (checkedValue === answers[questionNumber - 1][0]) {
+        const betInput = document.getElementById("bet");
+        const betValue = betInput.value;
+
+        if (betValue === "") {
             await updateDoc(teamRef, {
-                score: increment(answers[questionNumber - 1][1])
+                score: increment(-2)
             });
         } else {
             await updateDoc(teamRef, {
-                score: increment(-answers[questionNumber - 1][1])
+                score: increment(
+                    checkedValue === answers[questionNumber - 1] ?
+                        betValue :
+                        -betValue
+                )
             });
-
         }
+
         if (questionNumber === answers.length) {
             history.push("/game_over");
         }
