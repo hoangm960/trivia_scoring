@@ -96,3 +96,12 @@
     gap: 140px;
     position: relative;
 }
+
+.submit-button-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+}

@@ -7,6 +7,7 @@ import { getDoc, doc, onSnapshot, where, query, collection, getDocs, updateDoc, 
 import { db } from '../firebase';
 import Loading from '../components/loading';
 import { useHistory } from 'react-router-dom';
+import { InputBox } from '../components/input_box';
 
 
 
@@ -96,7 +97,7 @@ const TeamPage = () => {
 
     useEffect(() => {
         onLoad();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
 
@@ -104,7 +105,7 @@ const TeamPage = () => {
     return (
         <div className="container">
             {isLoading ?
-                <Loading msg="Waiting for host..."/> :
+                <Loading msg="Waiting for host..." /> :
                 <>
                     <div className="team-info">
                         <div className="team-name">{teamName}</div>
@@ -125,7 +126,10 @@ const TeamPage = () => {
                                 <Answer id={"choiceD"} text={"D"} />
                             </div>
                         </div>
-                        <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleSubmit}></Button>
+                        <div className="submit-button-container">
+                            <InputBox id="bet" title="Bet EC" placeHolder="Enter bet EC here..." type="number" />
+                            <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleSubmit} />
+                        </div>
                     </div>
                 </>}
         </div>

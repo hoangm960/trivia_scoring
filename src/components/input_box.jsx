@@ -1,10 +1,10 @@
 import React from "react";
-import "./style/login_input.css";
+import "./style/input_box.css";
 
-export const LoginInput = ({
+export const InputBox = ({
     id,
     placeHolder = "Enter text here...",
-    isPassword = false,
+    type = "text",
     title = "Text",
 }) => {
     return (
@@ -16,7 +16,7 @@ export const LoginInput = ({
             </div>
             <div className="input-frame">
                 <input
-                    type={isPassword ? "password" : "text"}
+                    type={type}
                     id={id}
                     className="input"
                     placeholder={placeHolder}

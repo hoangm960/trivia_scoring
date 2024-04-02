@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import './style/login.css';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import { LoginInput } from '../components/login_input';
+import { InputBox } from '../components/input_box';
 import { Button } from '../components/button';
 import ArrowRightIcon from '../assets/arrow-right.png';
 
@@ -44,8 +44,8 @@ const LoginPage = () => {
                 <span>Scoring</span>
             </p>
             <div className="form">
-                <LoginInput id='uid' placeHolder='Enter UID here' title='ID' />
-                <LoginInput id='password' placeHolder='Enter password here' title='Password' isPassword={true} />
+                <InputBox id='uid' placeHolder='Enter UID here' title='ID' />
+                <InputBox id='password' placeHolder='Enter password here' title='Password' isPassword={true} type="password" />
             </div>
             <Button text='Login' icon={ArrowRightIcon} onClick={handleLogin}></Button>
         </div>
