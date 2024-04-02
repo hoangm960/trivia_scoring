@@ -71,13 +71,16 @@ const TeamPage = () => {
                 score: increment(-2)
             });
         } else {
-            await updateDoc(teamRef, {
-                score: increment(
-                    checkedValue === answers[questionNumber - 1] ?
-                        betValue :
-                        -betValue
-                )
-            });
+            if (checkedValue === answers[questionNumber - 1]) {
+                await updateDoc(teamRef, {
+                    score: increment(betValue),
+                    correctAnswer: increment(1)
+                });
+            } else {
+                await updateDoc(teamRef, {
+                    score: increment(-betValue)
+                });
+            }
         }
 
         if (questionNumber === answers.length) {

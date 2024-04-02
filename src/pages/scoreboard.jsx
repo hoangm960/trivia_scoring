@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import './style/scoreboard.css';
 import { onSnapshot, collection, query } from 'firebase/firestore';
 import { db } from '../firebase';
+import { doc, getDoc } from 'firebase/firestore';
 import RowScoreboard from '../components/row_scoreboard';
 import Loading from '../components/loading';
 
@@ -9,6 +10,7 @@ function Scoreboard() {
 	const [sortedTeams, setSortedTeams] = React.useState([]);
 
 	const getScoreboard = async () => {
+		const questionSnap = await getDoc(doc(db, "game", "2024g"));
 		const teamRef = query(collection(db, "teams"));
 		onSnapshot(teamRef, (docs) => {
 			const teams = [];
@@ -22,6 +24,8 @@ function Scoreboard() {
 					<RowScoreboard
 						index={index + 1}
 						name={team.name}
+						correct={team.correctAnswer}
+						total={questionSnap.data().current_index}
 						score={team.score}
 						key={index}
 					/>
