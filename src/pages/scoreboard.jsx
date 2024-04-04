@@ -5,6 +5,7 @@ import { db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import RowScoreboard from '../components/row_scoreboard';
 import Loading from '../components/loading';
+import logo from "../assets/stem_club_logo.png";
 
 function Scoreboard() {
 	const [sortedTeams, setSortedTeams] = React.useState([]);
@@ -41,7 +42,10 @@ function Scoreboard() {
 
 	return (
 		<div className="container">
-			<div className="scoreboard-title">Scoreboard</div>
+			<img src={logo} alt="Logo" className="logo" />
+			<div className='scoreboard-title-container'>
+				<span className="scoreboard-title">Scoreboard</span>
+			</div> 
 			{sortedTeams.length === 0 ?
 				<Loading msg="Loading scoreboard..." /> :
 				<>
