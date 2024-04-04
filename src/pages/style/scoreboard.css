@@ -1,34 +1,58 @@
 .container {
-    height: 90vh;
-    align-items: center;
-    background-color: var(--white);
     display: flex;
+    width: 100%;
+    padding: 5.5625rem 0.3125rem;
     flex-direction: column;
     justify-content: space-around;
-    padding: 20px 5px 5px;
+    align-items: center;
     position: relative;
+    background: url("../../assets/background_scoreboard.png") lightgray 50% / cover no-repeat;
+}
+
+.logo {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    width: 100%;
+    max-width: 70px;
+    min-width: 70px;
+    border-radius: 4rem;
+}
+
+.scoreboard-title-container {
+    display: flex;
+    padding: 1rem;
+    justify-content: center;
+    align-items: center;
+    gap: 0.625rem;
+    border-radius: 0.125rem;
+    border: 6px solid var(--dark-green);
+    background: var(--green);
 }
 
 .scoreboard-title {
-    height: 46px;
+    display: flex;
+    width: 14rem;
+    height: 3rem;
+    flex-direction: column;
+    justify-content: center;
+
+    color: var(--skin);
     text-align: center;
-    font-size: 40px;
-    font-weight: 600;
-    font-family: 'Montserrat';
-    word-wrap: break-word;
-    letter-spacing: 0;
+    font-family: "Harding Text Web";
+    font-size: 3rem;
+    font-style: normal;
+    font-weight: 400;
     line-height: normal;
-    position: relative;
-    color: var(--deep-dark-purple);
 }
 
 .column-labels {
-    width: 100%;
+    width: 95%;
     align-items: center;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    gap: 15px;
+    gap: 10px;
     position: relative;
 }
 
@@ -39,63 +63,73 @@
 .label-rank  {
     display: flex;
     width: 5%;
-    height: 1.875rem;
-    padding: 0rem 0.625rem;
+    height: 2rem;
+    padding: auto;
     justify-content: center;
     align-items: center;
-    flex-shrink: 0;
-    
-    border-radius: 2.5rem;
-    border: 3px solid var(--deep-dark-purple);
+    flex-shrink: 0; 
+        
+    border-radius: 1.25rem 1.25rem 2.5rem 2.5rem;
+    border: 3px solid var(--dark-green);
+    background: var(--dark-green);
 }
 
 .label-name-scoreboard  {
     display: flex;
-    width: 60%;
-    height: 1.875rem;
-    padding: 0rem 0.625rem;
+    width: 70%;
+    height: 2rem;
+    padding: auto;
     justify-content: center;
     align-items: center;
     gap: 0.625rem;
     flex: 1 0 0;
-    
-    border-radius: 1.25rem;
-    border: 3px solid var(--deep-dark-purple);
+    align-self: stretch;
+        
+    border-radius: 1.25rem 1.25rem 1.875rem 1.875rem;
+    border: 3px solid var(--dark-green);
+    background: var(--dark-green);
 }
 
 .label-correct-answer {
     display: flex;
+    width: 10%;
+    height: 2rem;
+    padding: auto;
     justify-content: center;
     align-items: center;
-    width: 10%;
-    height: 1.875rem;
-    padding: 0rem 0.625rem;
     gap: 0.625rem;
     flex-shrink: 0;
-    
-    border-radius: 1.25rem;
-    border: 3px solid var(--deep-dark-purple);
+        
+    border-radius: 1.25rem 1.25rem 2.5rem 2.5rem;
+    border: 3px solid var(--dark-green);
+    background: var(--dark-green);
 }
 
 .label-score  {
     display: flex;
+    width: 10%;
+    height: 2rem;
+    padding: auto;
     justify-content: center;
     align-items: center;
-    width: 15%;
-    height: 1.875rem;
-    padding: 0rem 0.625rem;
     gap: 0.625rem;
     flex-shrink: 0;
     
-    border-radius: 1.25rem;
-    border: 3px solid var(--deep-dark-purple);
+    border-radius: 1.25rem 1.25rem 2.5rem 2.5rem;
+    border: 3px solid var(--dark-green);
+    background: var(--dark-green);
 }
 
 .teams-info-container {
-    width: 90%;
-    flex-direction: column;
     display: flex;
-    justify-content: space-around;
-    gap: 15px;
-    position: relative;
+    width: 95%;
+    height: 90%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+
+    border-radius: 0.25rem;
+    background: rgba(133, 158, 116, 0.20);
+    backdrop-filter: blur(5px);
 }
