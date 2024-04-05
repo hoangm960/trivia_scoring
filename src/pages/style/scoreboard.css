@@ -6,7 +6,11 @@
     justify-content: space-around;
     align-items: center;
     position: relative;
-    background: url("../../assets/background_scoreboard.png") lightgray 50% / cover no-repeat;
+    background: url("../../assets/background_scoreboard.png") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 .logo {
@@ -21,7 +25,7 @@
 
 .scoreboard-title-container {
     display: flex;
-    padding: 1rem;
+    padding: 0.5rem;
     justify-content: center;
     align-items: center;
     gap: 0.625rem;
@@ -32,8 +36,8 @@
 
 .scoreboard-title {
     display: flex;
-    width: 14rem;
-    height: 3rem;
+    width: 20rem;
+    height: 3.5rem;
     flex-direction: column;
     justify-content: center;
 
