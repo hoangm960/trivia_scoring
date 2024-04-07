@@ -47,17 +47,17 @@ function Scoreboard() {
 				<span className="scoreboard-title">Scoreboard</span>
 			</div> 
 			{sortedTeams.length === 0 ?
-				<Loading msg="Loading scoreboard..." /> :
+				 <Loading msg="Loading scoreboard..." /> :
 				<>
-					<div className="teams-info-container">
-						<div className="column-labels">
-							<div className="label-rank team-info-text">Rank</div>
-							<div className="label-name-scoreboard team-info-text">Team name</div>
-							<div className="label-correct-answer team-info-text">Correct</div>
-							<div className="label-score team-info-text">Score</div>
-						</div>
+					<table>
+						<tr className='column-labels'>
+							<td><div className="label-rank team-info-text">Rank</div></td>
+							<td><div className="label-name-scoreboard team-info-text">Team name</div></td>
+							<td><div className="label-correct-answer team-info-text">Correct</div></td>
+							<td><div className="label-score team-info-text">Score</div></td>
+						</tr>
 						{sortedTeams}
-					</div>
+					</table>
 				</>
 			}
 		</div>

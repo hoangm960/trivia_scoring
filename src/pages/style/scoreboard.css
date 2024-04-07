@@ -6,7 +6,11 @@
     justify-content: space-around;
     align-items: center;
     position: relative;
-    background: url("../../assets/background_scoreboard.png") lightgray 50% / cover no-repeat;
+    background: url("../../assets/background_scoreboard.png") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 .logo {
@@ -21,7 +25,7 @@
 
 .scoreboard-title-container {
     display: flex;
-    padding: 1rem;
+    padding: 0.5rem;
     justify-content: center;
     align-items: center;
     gap: 0.625rem;
@@ -32,8 +36,8 @@
 
 .scoreboard-title {
     display: flex;
-    width: 14rem;
-    height: 3rem;
+    width: 20rem;
+    height: 3.5rem;
     flex-direction: column;
     justify-content: center;
 
@@ -46,90 +50,74 @@
     line-height: normal;
 }
 
-.column-labels {
-    width: 95%;
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    gap: 10px;
-    position: relative;
-}
-
-.teams-info-container > :first-child {
-    padding-bottom: 15px;
-}
 
 .label-rank  {
-    display: flex;
-    width: 5%;
-    height: 2rem;
-    padding: auto;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0; 
-        
+    margin-bottom: 1rem;
     border-radius: 1.25rem 1.25rem 2.5rem 2.5rem;
     border: 3px solid var(--dark-green);
     background: var(--dark-green);
 }
 
 .label-name-scoreboard  {
-    display: flex;
-    width: 70%;
-    height: 2rem;
-    padding: auto;
-    justify-content: center;
-    align-items: center;
-    gap: 0.625rem;
-    flex: 1 0 0;
-    align-self: stretch;
-        
+    margin-bottom: 1rem;    
     border-radius: 1.25rem 1.25rem 1.875rem 1.875rem;
     border: 3px solid var(--dark-green);
     background: var(--dark-green);
 }
 
 .label-correct-answer {
-    display: flex;
-    width: 10%;
-    height: 2rem;
-    padding: auto;
-    justify-content: center;
-    align-items: center;
-    gap: 0.625rem;
-    flex-shrink: 0;
-        
+    margin-bottom: 1rem;
     border-radius: 1.25rem 1.25rem 2.5rem 2.5rem;
     border: 3px solid var(--dark-green);
     background: var(--dark-green);
 }
 
 .label-score  {
-    display: flex;
-    width: 10%;
-    height: 2rem;
-    padding: auto;
-    justify-content: center;
-    align-items: center;
-    gap: 0.625rem;
-    flex-shrink: 0;
-    
+    margin-bottom: 1rem;
     border-radius: 1.25rem 1.25rem 2.5rem 2.5rem;
     border: 3px solid var(--dark-green);
     background: var(--dark-green);
 }
 
 .teams-info-container {
-    display: flex;
     width: 95%;
     height: 90%;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
 
     border-radius: 0.25rem;
     background: rgba(133, 158, 116, 0.20);
     backdrop-filter: blur(5px);
+}
+
+
+td {
+    border-collapse: collapse;
+    text-align: center;
+    vertical-align: middle;
+}
+
+table {
+    width: 95%;
+}
+
+table td:nth-child(1) {
+    width: 5%;
+}
+
+table td:nth-child(2) {
+    width: 60%;
+}
+
+table td:nth-child(3) {
+    width: 10%;
+}
+
+table td:nth-child(4) {
+    width: 10%;
+}
+
+.label-rank, .label-name-scoreboard, .label-correct-answer, .label-score {
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
