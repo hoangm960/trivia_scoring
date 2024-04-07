@@ -29,7 +29,7 @@ export const Button = ({
             }}
             onClick={onClick}
         >
-            {text != null && <button className="btn-text">{text}</button>}
+            {text != null && <div className="btn-text">{text}</div>}
 
             {icon != null && <img className="right-icon" src={icon} alt="right-icon" />}
         </button>

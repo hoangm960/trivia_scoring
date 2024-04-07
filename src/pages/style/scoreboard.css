@@ -1,11 +1,14 @@
-.container {
+.scoreboard-container {
     display: flex;
-    width: 100%;
+    width: 100vw;
+    height: 100vh;
     padding: 5.5625rem 0.3125rem;
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
     position: relative;
+    background-color: transparent;
+    gap: 100px;
     background: url("../../assets/background_scoreboard.png") no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
