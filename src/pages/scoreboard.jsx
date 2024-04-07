@@ -12,7 +12,7 @@ function Scoreboard() {
 
 	const getScoreboard = async () => {
 		const questionSnap = await getDoc(doc(db, "game", "2024g"));
-		const teamRef = query(collection(db, "teams"));
+		const teamRef = query(collection(db, "history"));
 		onSnapshot(teamRef, (docs) => {
 			const teams = [];
 			docs.forEach((doc) => {
@@ -25,9 +25,9 @@ function Scoreboard() {
 					<RowScoreboard
 						index={index + 1}
 						name={team.name}
-						correct={team.correctAnswer}
+						correct={team.correctAnswers}
 						total={questionSnap.data().current_index}
-						score={team.score}
+						score={team.credit}
 						key={index}
 					/>
 				);
@@ -41,11 +41,11 @@ function Scoreboard() {
 	}, []);
 
 	return (
-		<div className="container">
+		<div className="scoreboard-container">
 			<img src={logo} alt="Logo" className="logo" />
 			<div className='scoreboard-title-container'>
 				<span className="scoreboard-title">Scoreboard</span>
-			</div> 
+			</div>
 			{sortedTeams.length === 0 ?
 				 <Loading msg="Loading scoreboard..." /> :
 				<>

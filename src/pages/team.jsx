@@ -3,12 +3,17 @@ import './style/team.css';
 import { Button } from '../components/button';
 import CheckIcon from '../assets/check.png';
 import { Answer } from '../components/radio_answer';
-import { getDoc, doc, onSnapshot, where, query, collection, getDocs, updateDoc, increment } from 'firebase/firestore';
+import { getDoc, doc, onSnapshot, where, query, collection, getDocs, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import Loading from '../components/loading';
 import { useHistory } from 'react-router-dom';
 import { InputBox } from '../components/input_box';
 
+const QuestionStatus = {
+    NOT_STARTED: 'pending',
+    IN_PROGRESS: 'started',
+    FINISHED: 'ended'
+};
 
 
 const TeamPage = () => {
@@ -17,15 +22,25 @@ const TeamPage = () => {
     const [teamName, setTeamName] = React.useState("Team Name");
     const [questionNumber, setQuestionNumber] = React.useState(0);
     const [prevQuestionNumber, setPrevQuestionNumber] = React.useState(0);
-    const [answers, setAnswers] = React.useState([]);
+    const [questions, setQuestions] = React.useState([]);
     const teamID = localStorage.getItem("team");
-    const teamRef = doc(db, "teams", teamID);
+    const teamRef = doc(db, "history", teamID);
+    const [questionStatus, setQuestionStatus] = React.useState(QuestionStatus.NOT_STARTED);
+
 
     const onLoad = async () => {
         setIsLoading(true);
+        updateQuestionStatus();
         updateTeamName();
         updateQuestionNumber();
         await getCorrectAnswers();
+    }
+
+    const updateQuestionStatus = () => {
+        const gameRef = doc(db, "game", "2024g");
+        onSnapshot(gameRef, (doc) => {
+            setQuestionStatus(doc.data().status);
+        });
     }
 
     const updateTeamName = async () => {
@@ -56,7 +71,7 @@ const TeamPage = () => {
             const currentQuestionRef = doc(db, "questions", currentQuestionID);
             const currentQuestionSnap = await getDoc(currentQuestionRef);
             const correctAnswer = currentQuestionSnap.data().answer;
-            setAnswers(answers => [...answers, correctAnswer]);
+            setQuestions(answers => [...answers, {"answer": correctAnswer, "questionID": currentQuestionID}]);
         });
     }
 
@@ -64,26 +79,48 @@ const TeamPage = () => {
         const checkedAnswer = document.querySelector('input[name=choices]:checked');
         const checkedValue = document.querySelector('label[for=' + checkedAnswer.id + ']').textContent;
         const betInput = document.getElementById("bet");
-        const betValue = betInput.value;
+        var betValue = +betInput.value;
 
-        if (betValue === "") {
-            await updateDoc(teamRef, {
-                score: increment(-2)
-            });
-        } else {
-            if (checkedValue === answers[questionNumber - 1]) {
-                await updateDoc(teamRef, {
-                    score: increment(betValue),
-                    correctAnswer: increment(1)
-                });
-            } else {
-                await updateDoc(teamRef, {
-                    score: increment(-betValue)
-                });
-            }
+        // fetch("https://trivia-backend-avcm.onrender.com/api/answerQuestion", {
+        //     method: "POST",
+        //     body: JSON.stringify({
+        //         answer: checkedValue,
+        //         teamId: teamID,
+        //         bet: betValue
+        //     }),
+        //     headers: {
+        //         "Content-type": "application/json"
+        //     }
+        // });
+
+        const currentQuestion = questions[questionNumber - 1];
+        const isCorrect = currentQuestion.answer === checkedValue;
+        const historyCollectionRef = collection(db, 'history');
+        const historyRef = doc(historyCollectionRef, teamID);
+        const historySnapshot = await getDoc(historyRef)
+        const historyData = historySnapshot.data()
+        const currentCredit = historyData.credit
+        // if bet is more than half of current credit or more than current credit
+        if ((betValue > (currentCredit + 1) / 2) && currentCredit !== 0 && questionNumber <= 10) {
+            betValue = Math.floor((currentCredit + 1) / 2)
+        }
+        if (currentCredit !== 0 && questionNumber > 10 && betValue > currentCredit) {
+            betValue = currentCredit
+            return
         }
 
-        if (questionNumber === answers.length) {
+        const newHistory = {
+            ...historyData.history, [currentQuestion.questionID]: {
+                answer: isCorrect,
+                bet: betValue,
+                status: 'answered'
+            }
+        }
+        await updateDoc(historyRef, {
+            history: newHistory,
+        })
+
+        if (questionNumber === questions.length) {
             history.push("/game_over");
         }
         else {
@@ -102,15 +139,15 @@ const TeamPage = () => {
 
 
     return (
-        <div className="container">
-            {isLoading ?
+        <div className="team-container">
+            {(isLoading || questionStatus !== QuestionStatus.IN_PROGRESS) ?
                 <Loading msg="Waiting for host..." /> :
                 <>
                     <div className="team-info">
                         <div className="team-name">{teamName}</div>
                         <div className="question-counter-container">
                             <div className="question">Question:</div>
-                            <div className="question-number">{questionNumber}/{answers.length}</div>
+                            <div className="question-number">{questionNumber}/{questions.length}</div>
                         </div>
                     </div>
                     <div className="question-container">

@@ -23,12 +23,8 @@ const LoginPage = () => {
 
         if (docSnap.exists()) {
             if (docSnap.get("password") === password) {
-                getDoc(docSnap.data().team).then(
-                    (team) => {
-                        localStorage.setItem("team", team.id);
-                        history.push('/game_team');
-                    }
-                );
+                localStorage.setItem("team", uid);
+                history.push('/game_team');
             } else {
                 alert("Wrong Password");
             }
@@ -38,7 +34,7 @@ const LoginPage = () => {
     }
 
     return (
-        <div className="container1">
+        <div className="login-container">
             <p className="title">
                 <span>Trivia</span>
                 <span>Scoring</span>
