@@ -56,7 +56,160 @@ function Scoreboard() {
 							<td><div className="label-correct-answer team-info-text">Correct</div></td>
 							<td><div className="label-score team-info-text">Score</div></td>
 						</tr>
-						{sortedTeams}
+						{/* {sortedTeams} */}
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						<tr>
+							<td><div className="team-rank team-info-text">1</div></td>
+							<td><div className="team-name-scoreboard team-info-text">Team 1</div></td>
+							<td><div className="team-correct-answer team-info-text-2">
+									{1}/{2}
+								</div></td>
+								<td><div className="team-score team-info-text-2">{100}</div></td>
+						</tr>
+						
 					</table>
 				</>
 			}
