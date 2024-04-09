@@ -7,8 +7,16 @@ import RowScoreboard from '../components/row_scoreboard';
 import Loading from '../components/loading';
 import logo from "../assets/stem_club_logo.png";
 
+const QuestionStatus = {
+    NOT_STARTED: 'pending',
+    IN_PROGRESS: 'started',
+    FINISHED: 'ended'
+};
+
 function Scoreboard() {
 	const [sortedTeams, setSortedTeams] = React.useState([]);
+    const [questionStatus, setQuestionStatus] = React.useState(QuestionStatus.NOT_STARTED);
+
 
 	const getScoreboard = async () => {
 		const questionSnap = await getDoc(doc(db, "game", "2024g"));
@@ -32,6 +40,8 @@ function Scoreboard() {
 					/>
 				);
 			}));
+
+			setQuestionStatus(doc.data().status);
 		});
 	}
 
