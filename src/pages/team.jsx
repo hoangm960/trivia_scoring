@@ -23,9 +23,10 @@ const TeamPage = () => {
     const [questionNumber, setQuestionNumber] = React.useState(0);
     const [prevQuestionNumber, setPrevQuestionNumber] = React.useState(0);
     const [questions, setQuestions] = React.useState([]);
+    const [questionStatus, setQuestionStatus] = React.useState(QuestionStatus.NOT_STARTED);
+    const [duration, setDuration] = React.useState(null);
     const teamID = localStorage.getItem("team");
     const teamRef = doc(db, "history", teamID);
-    const [questionStatus, setQuestionStatus] = React.useState(QuestionStatus.NOT_STARTED);
 
 
     const onLoad = async () => {
@@ -38,10 +39,30 @@ const TeamPage = () => {
 
     const updateQuestionStatus = () => {
         const gameRef = doc(db, "game", "2024g");
-        onSnapshot(gameRef, (doc) => {
-            setQuestionStatus(doc.data().status);
+        onSnapshot(gameRef, (gameSnap) => {
+            setQuestionStatus(gameSnap.data().status);
+            if (gameSnap.data().status === QuestionStatus.IN_PROGRESS) {
+                // console.log(questions);
+                // const questionRef = doc(db, "questions", questions[gameSnap.data().current_index - 1].questionID);
+                // getDoc(questionRef).then((questionSnap) => {
+                setDuration(10);
+                // });
+            }
         });
     }
+
+    useEffect(() => {
+        if (duration === 0) {
+            setDuration(null);
+        }
+
+        if (!duration) return;
+
+        const interval = setInterval(() => {
+            setDuration(duration - 1);
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [duration]);
 
     const updateTeamName = async () => {
         const teamSnap = await getDoc(teamRef);
@@ -71,7 +92,7 @@ const TeamPage = () => {
             const currentQuestionRef = doc(db, "questions", currentQuestionID);
             const currentQuestionSnap = await getDoc(currentQuestionRef);
             const correctAnswer = currentQuestionSnap.data().answer;
-            setQuestions(answers => [...answers, {"answer": correctAnswer, "questionID": currentQuestionID}]);
+            setQuestions(answers => [...answers, { "answer": correctAnswer, "questionID": currentQuestionID }]);
         });
     }
 
@@ -149,6 +170,7 @@ const TeamPage = () => {
                             <div className="question">Question:</div>
                             <div className="question-number">{questionNumber}/{questions.length}</div>
                         </div>
+                        <div>{duration}</div>
                     </div>
                     <div className="question-container">
                         <div className="question-text">What answer did the team choose?</div>
