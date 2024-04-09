@@ -31,17 +31,17 @@ function Scoreboard() {
 			},).map((team, index) => {
 				return (
 					<RowScoreboard
-						index={index + 1}
-						name={team.name}
-						correct={team.correctAnswers}
-						total={questionSnap.data().current_index}
-						score={team.credit}
-						key={index}
+					index={index + 1}
+					name={team.name}
+					correct={team.correctAnswers}
+					total={questionSnap.data().current_index}
+					score={team.credit}
+					key={index}
 					/>
 				);
 			}));
+			setQuestionStatus(questionSnap.data().status);
 
-			setQuestionStatus(doc.data().status);
 		});
 	}
 
