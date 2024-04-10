@@ -170,8 +170,8 @@ const TeamPage = () => {
                             <div className="question">Question:</div>
                             <div className="question-number">{questionNumber}/{questions.length}</div>
                         </div>
-                        <div>{duration}</div>
                     </div>
+                    <div className="timer">{duration}</div>
                     <div className="question-container">
                         <div className="question-text">What answer did the team choose?</div>
                         <div className="answers">

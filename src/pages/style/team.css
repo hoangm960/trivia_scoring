@@ -18,6 +18,19 @@
     position: relative;
 }
 
+.timer {
+    text-align: center;
+    font-size: 60px;
+    font-family: 'Montserrat';
+    font-weight: 300;
+    word-wrap: break-word;
+
+    color: var(--deep-dark-purple);
+    letter-spacing: 0;
+    line-height: normal;
+    position: relative;
+}
+
 .team-name,
 .question,
 .question-number {
