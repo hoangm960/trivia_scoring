@@ -1,0 +1,21 @@
+.team-container {
+    height: 90vh;
+    align-items: center;
+    background-color: var(--white);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: space-around;
+    padding: 20px 5px 5px;
+    position: relative;
+}
+
+
+.submit-button-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+}
