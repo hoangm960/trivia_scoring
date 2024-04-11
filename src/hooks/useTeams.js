@@ -17,7 +17,7 @@ export default function useTeams() {
             });
 
             const sortedTeams = teams
-                .sort((a, b) => b.score - a.score)
+                .sort((a, b) => b.credit - a.credit)
                 .map((team, index) => {
                     return (
                         <RowScoreboard
