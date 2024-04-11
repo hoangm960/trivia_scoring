@@ -3,13 +3,14 @@ import './style/team.css';
 import { Button } from '../components/button';
 import CheckIcon from '../assets/check.png';
 import { Answer } from '../components/radio_answer';
-import { getDoc, doc, onSnapshot, collection, updateDoc } from 'firebase/firestore';
+import { getDoc, doc, collection, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import Loading from '../components/loading';
 import { useHistory } from 'react-router-dom';
 import { InputBox } from '../components/input_box';
 import useQuestions from '../hooks/useQuestions';
 import useQuestionStatus from '../hooks/useQuestionStatus';
+import useQuestionCurrentIndex from '../hooks/useQuestionCurrentIndex';
 import { QUESTION_STATUS } from '../constants/questionConst';
 
 const TeamPage = () => {
@@ -17,9 +18,9 @@ const TeamPage = () => {
     const [isLoading, setIsLoading] = React.useState(false);
     const [isWaiting, setIsWaiting] = React.useState(false);
     const [teamName, setTeamName] = React.useState("Team Name");
-    const [questionNumber, setQuestionNumber] = React.useState(0);
     const questionStatus = useQuestionStatus();
     const questions = useQuestions();
+    const currentQuestionIndex = useQuestionCurrentIndex();
     const [duration, setDuration] = React.useState(null);
     const [betValue, setBetValue] = React.useState(0);
     const teamID = localStorage.getItem("team");
@@ -29,7 +30,6 @@ const TeamPage = () => {
     const onLoad = async () => {
         setIsLoading(true);
         updateTeamName();
-        updateQuestionNumber();
         setIsLoading(false);
     }
     useEffect(() => {
@@ -39,7 +39,6 @@ const TeamPage = () => {
 
     useEffect(() => {
         setIsLoading(questions.length === 0);
-
     }, [questions]);
 
     useEffect(() => {
@@ -49,9 +48,9 @@ const TeamPage = () => {
             setDuration(0);
         }
         if (questionStatus === QUESTION_STATUS.IN_PROGRESS) {
-            setDuration(questions[questionNumber - 1].duration);
+            setDuration(questions[currentQuestionIndex - 1].duration);
         }
-    }, [questionStatus, questions, questionNumber]);
+    }, [questionStatus, questions, currentQuestionIndex]);
 
     useEffect(() => {
         if (duration === 0) {
@@ -69,14 +68,6 @@ const TeamPage = () => {
     const updateTeamName = async () => {
         const teamSnap = await getDoc(teamRef);
         setTeamName(teamSnap.data().name);
-    }
-
-    const updateQuestionNumber = () => {
-        const gameRef = doc(db, "game", "2024g");
-        onSnapshot(gameRef, (doc) => {
-            const tmpQuestionNumber = doc.data().current_index;
-            setQuestionNumber(tmpQuestionNumber);
-        });
     }
 
 
@@ -106,10 +97,10 @@ const TeamPage = () => {
         }
 
         // if bet is more than half of current credit or more than current credit
-        if ((betValue > (currentCredit + 1) / 2) && questionNumber <= 10) {
+        if ((betValue > (currentCredit + 1) / 2) && currentQuestionIndex <= 10) {
             betValue = Math.floor((currentCredit + 1) / 2)
         }
-        if (questionNumber > 10 && betValue > currentCredit) {
+        if (currentQuestionIndex > 10 && betValue > currentCredit) {
             betValue = currentCredit
             return
         }
@@ -133,7 +124,7 @@ const TeamPage = () => {
         //     }
         // });
 
-        const currentQuestion = questions[questionNumber - 1];
+        const currentQuestion = questions[currentQuestionIndex - 1];
         const isCorrect = currentQuestion.answer === checkedValue;
         const historyCollectionRef = collection(db, 'history');
         const historyRef = doc(historyCollectionRef, teamID);
@@ -151,7 +142,7 @@ const TeamPage = () => {
             history: newHistory,
         })
 
-        if (questionNumber === questions.length) {
+        if (currentQuestionIndex === questions.length) {
             history.push("/game_over");
         }
         else {
@@ -172,7 +163,7 @@ const TeamPage = () => {
                         <div className="submit-button-container">
                             <div className="question-counter-container">
                                 <div className="question">Question:</div>
-                                <div className="question-number">{questionNumber}/{questions.length}</div>
+                                <div className="question-number">{currentQuestionIndex}/{questions.length}</div>
                             </div>
                             <InputBox id="betInput" title="Bet EC" placeHolder="Enter bet EC here..." type="number" />
                             <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleBet} />
@@ -184,7 +175,7 @@ const TeamPage = () => {
                                     <div className="team-name">{teamName}</div>
                                     <div className="question-counter-container">
                                         <div className="question">Question:</div>
-                                        <div className="question-number">{questionNumber}/{questions.length}</div>
+                                        <div className="question-number">{currentQuestionIndex}/{questions.length}</div>
                                     </div>
                                 </div>
                                 <div className="timer">{duration}</div>
