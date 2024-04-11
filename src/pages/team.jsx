@@ -22,7 +22,6 @@ const TeamPage = () => {
     const [isWaiting, setIsWaiting] = React.useState(false);
     const [teamName, setTeamName] = React.useState("Team Name");
     const [questionNumber, setQuestionNumber] = React.useState(0);
-    const [prevQuestionNumber, setPrevQuestionNumber] = React.useState(0);
     const [questions, setQuestions] = React.useState([]);
     const [questionStatus, setQuestionStatus] = React.useState(QuestionStatus.NOT_STARTED);
     const [duration, setDuration] = React.useState(null);
@@ -37,7 +36,13 @@ const TeamPage = () => {
         updateTeamName();
         updateQuestionNumber();
         await getQuestionInfo();
+        setIsLoading(false);
     }
+
+    useEffect(() => {
+        onLoad();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const updateQuestionStatus = () => {
         const gameRef = doc(db, "game", "2024g");
@@ -80,9 +85,6 @@ const TeamPage = () => {
         onSnapshot(gameRef, (doc) => {
             const tmpQuestionNumber = doc.data().current_index;
             setQuestionNumber(tmpQuestionNumber);
-            if ((questionNumber !== 0) | (prevQuestionNumber !== tmpQuestionNumber)) {
-                setIsLoading(false);
-            }
         });
     }
 
@@ -102,6 +104,7 @@ const TeamPage = () => {
             const correctAnswer = currentQuestionSnap.data().answer;
             setQuestions(answers => [...answers, { "answer": correctAnswer, "questionID": questionID, "duration": questionDuration, "index": questionIndex }]);
         });
+        return;
     }
 
 
@@ -172,20 +175,11 @@ const TeamPage = () => {
         }
         else {
             checkedAnswer.checked = false;
-            setPrevQuestionNumber(questionNumber);
             setIsWaiting(true);
             setBetValue(0);
             setDuration(0);
         }
     }
-
-
-    useEffect(() => {
-        onLoad();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-
 
     return (
         <div className="team-container">
