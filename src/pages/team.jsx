@@ -8,14 +8,9 @@ import { db } from '../firebase';
 import Loading from '../components/loading';
 import { useHistory } from 'react-router-dom';
 import { InputBox } from '../components/input_box';
-import getQuestion from '../helper/getQuestion';
-
-const QuestionStatus = {
-    NOT_STARTED: 'pending',
-    IN_PROGRESS: 'started',
-    FINISHED: 'ended'
-};
-
+import useQuestions from '../hooks/useQuestions';
+import useQuestionStatus from '../hooks/useQuestionStatus';
+import { QUESTION_STATUS } from '../constants/questionConst';
 
 const TeamPage = () => {
     const history = useHistory();
@@ -23,8 +18,9 @@ const TeamPage = () => {
     const [isWaiting, setIsWaiting] = React.useState(false);
     const [teamName, setTeamName] = React.useState("Team Name");
     const [questionNumber, setQuestionNumber] = React.useState(0);
-    const [questions, setQuestions] = React.useState([]);
-    const [questionStatus, setQuestionStatus] = React.useState(QuestionStatus.NOT_STARTED);
+    const questionStatus = useQuestionStatus();
+
+    const questions = useQuestions();
     const [duration, setDuration] = React.useState(null);
     const [betValue, setBetValue] = React.useState(0);
     const teamID = localStorage.getItem("team");
@@ -33,33 +29,29 @@ const TeamPage = () => {
 
     const onLoad = async () => {
         setIsLoading(true);
-        updateQuestionStatus();
         updateTeamName();
         updateQuestionNumber();
-        setQuestions(await getQuestion());
         // await getQuestionInfo();
         setIsLoading(false);
     }
+
+    useEffect(() => {
+        setIsLoading(questions.length === 0);
+
+    }, [questions]);
 
     useEffect(() => {
         onLoad();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const updateQuestionStatus = () => {
-        const gameRef = doc(db, "game", "2024g");
-        onSnapshot(gameRef, (gameSnap) => {
-            setQuestionStatus(gameSnap.data().status);
-        });
-    }
-
     useEffect(() => {
-        if (questionStatus === QuestionStatus.NOT_STARTED) {
+        if (questionStatus === QUESTION_STATUS.NOT_STARTED) {
             setIsWaiting(false);
             setBetValue(0);
             setDuration(0);
         }
-        if (questionStatus === QuestionStatus.IN_PROGRESS) {
+        if (questionStatus === QUESTION_STATUS.IN_PROGRESS) {
             setDuration(questions[questionNumber - 1].duration);
         }
     }, [questionStatus, questions, questionNumber]);
@@ -179,7 +171,7 @@ const TeamPage = () => {
                 <Loading msg="Loading..." /> :
                 (isWaiting) ?
                     <Loading msg="Wait for the next question..." /> :
-                    (questionStatus === QuestionStatus.NOT_STARTED && betValue === 0) ?
+                    (questionStatus === QUESTION_STATUS.NOT_STARTED && betValue === 0) ?
                         <div className="submit-button-container">
                             <div className="question-counter-container">
                                 <div className="question">Question:</div>
@@ -188,7 +180,7 @@ const TeamPage = () => {
                             <InputBox id="betInput" title="Bet EC" placeHolder="Enter bet EC here..." type="number" />
                             <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleBet} />
                         </div> :
-                        (questionStatus !== QuestionStatus.IN_PROGRESS) ?
+                        (questionStatus !== QUESTION_STATUS.IN_PROGRESS) ?
                             <Loading msg="Waiting for host to start the question..." /> :
                             <>
                                 <div className="team-info">
