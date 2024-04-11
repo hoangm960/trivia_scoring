@@ -38,8 +38,8 @@ const TeamPage = () => {
         if (questionStatus === QUESTION_STATUS.NOT_STARTED) {
             setIsWaiting(false);
             setBetValue(0);
-            setDuration(0);
-        } else if (questionStatus === QUESTION_STATUS.IN_PROGRESS) {
+            setDuration(null);
+        } else if (questionStatus === QUESTION_STATUS.IN_PROGRESS && !isOverTime) {
             setDuration(questions[currentQuestionIndex - 1].duration);
         } else if (questionStatus === QUESTION_STATUS.FINISHED) {
             // add 3 seconds buffer for user to input answer
@@ -163,7 +163,7 @@ const TeamPage = () => {
                                 onClick={handleBet}
                             />
                         </div> :
-                        (questionStatus !== QUESTION_STATUS.IN_PROGRESS || !isOverTime) ?
+                        (questionStatus !== QUESTION_STATUS.IN_PROGRESS && !isOverTime) ?
                             <Loading msg="Waiting for host to start the question..." /> :
                             <>
                                 <div className="team-info">
