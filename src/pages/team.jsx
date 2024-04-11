@@ -19,12 +19,13 @@ const QuestionStatus = {
 const TeamPage = () => {
     const history = useHistory();
     const [isLoading, setIsLoading] = React.useState(false);
+    const [isWaiting, setIsWaiting] = React.useState(false);
     const [teamName, setTeamName] = React.useState("Team Name");
     const [questionNumber, setQuestionNumber] = React.useState(0);
-    const [prevQuestionNumber, setPrevQuestionNumber] = React.useState(0);
     const [questions, setQuestions] = React.useState([]);
     const [questionStatus, setQuestionStatus] = React.useState(QuestionStatus.NOT_STARTED);
     const [duration, setDuration] = React.useState(null);
+    const [betValue, setBetValue] = React.useState(0);
     const teamID = localStorage.getItem("team");
     const teamRef = doc(db, "history", teamID);
 
@@ -34,22 +35,32 @@ const TeamPage = () => {
         updateQuestionStatus();
         updateTeamName();
         updateQuestionNumber();
-        await getCorrectAnswers();
+        await getQuestionInfo();
+        setIsLoading(false);
     }
+
+    useEffect(() => {
+        onLoad();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const updateQuestionStatus = () => {
         const gameRef = doc(db, "game", "2024g");
         onSnapshot(gameRef, (gameSnap) => {
             setQuestionStatus(gameSnap.data().status);
-            if (gameSnap.data().status === QuestionStatus.IN_PROGRESS) {
-                // console.log(questions);
-                // const questionRef = doc(db, "questions", questions[gameSnap.data().current_index - 1].questionID);
-                // getDoc(questionRef).then((questionSnap) => {
-                setDuration(10);
-                // });
-            }
         });
     }
+
+    useEffect(() => {
+        if (questionStatus === QuestionStatus.NOT_STARTED) {
+            setIsWaiting(false);
+            setBetValue(0);
+            setDuration(0);
+        }
+        if (questionStatus === QuestionStatus.IN_PROGRESS) {
+            setDuration(questions[questionNumber - 1].duration);
+        }
+    }, [questionStatus, questions, questionNumber]);
 
     useEffect(() => {
         if (duration === 0) {
@@ -74,13 +85,10 @@ const TeamPage = () => {
         onSnapshot(gameRef, (doc) => {
             const tmpQuestionNumber = doc.data().current_index;
             setQuestionNumber(tmpQuestionNumber);
-            if ((questionNumber !== 0) | (prevQuestionNumber !== tmpQuestionNumber)) {
-                setIsLoading(false);
-            }
         });
     }
 
-    const getCorrectAnswers = async () => {
+    const getQuestionInfo = async () => {
         const gameRef = doc(db, "game", "2024g");
         const questionRef = collection(db, "questions");
         const questionInGameSnap = await getDocs(query(
@@ -88,19 +96,49 @@ const TeamPage = () => {
             where("game", "==", gameRef.id))
         );
         questionInGameSnap.forEach(async (question) => {
-            const currentQuestionID = question.id;
-            const currentQuestionRef = doc(db, "questions", currentQuestionID);
+            const questionID = question.id;
+            const questionIndex = question.data().index;
+            const questionDuration = question.data().duration;
+            const currentQuestionRef = doc(db, "questions", questionID);
             const currentQuestionSnap = await getDoc(currentQuestionRef);
             const correctAnswer = currentQuestionSnap.data().answer;
-            setQuestions(answers => [...answers, { "answer": correctAnswer, "questionID": currentQuestionID }]);
+            setQuestions(answers => [...answers, { "answer": correctAnswer, "questionID": questionID, "duration": questionDuration, "index": questionIndex }]);
         });
+        return;
+    }
+
+
+    useEffect(
+        () => {
+            if (questions.length !== 0)
+                questions.sort((a, b) => a.index - b.index);
+        },
+        [questions]
+    );
+
+    const handleBet = async () => {
+        const betInput = document.getElementById('betInput');
+        var betValue = +betInput.value;
+        const historyCollectionRef = collection(db, 'history');
+        const historyRef = doc(historyCollectionRef, teamID);
+        const historySnapshot = await getDoc(historyRef)
+        const historyData = historySnapshot.data()
+        const currentCredit = historyData.credit
+        // if bet is more than half of current credit or more than current credit
+        if ((betValue > (currentCredit + 1) / 2) && currentCredit !== 0 && questionNumber <= 10) {
+            betValue = Math.floor((currentCredit + 1) / 2)
+        }
+        if (currentCredit !== 0 && questionNumber > 10 && betValue > currentCredit) {
+            betValue = currentCredit
+            return
+        }
+
+        setBetValue(betValue);
     }
 
     const handleSubmit = async () => {
         const checkedAnswer = document.querySelector('input[name=choices]:checked');
         const checkedValue = document.querySelector('label[for=' + checkedAnswer.id + ']').textContent;
-        const betInput = document.getElementById("bet");
-        var betValue = +betInput.value;
 
         // fetch("https://trivia-backend-avcm.onrender.com/api/answerQuestion", {
         //     method: "POST",
@@ -120,20 +158,11 @@ const TeamPage = () => {
         const historyRef = doc(historyCollectionRef, teamID);
         const historySnapshot = await getDoc(historyRef)
         const historyData = historySnapshot.data()
-        const currentCredit = historyData.credit
-        // if bet is more than half of current credit or more than current credit
-        if ((betValue > (currentCredit + 1) / 2) && currentCredit !== 0 && questionNumber <= 10) {
-            betValue = Math.floor((currentCredit + 1) / 2)
-        }
-        if (currentCredit !== 0 && questionNumber > 10 && betValue > currentCredit) {
-            betValue = currentCredit
-            return
-        }
 
         const newHistory = {
             ...historyData.history, [currentQuestion.questionID]: {
-                answer: isCorrect,
                 bet: betValue,
+                answer: isCorrect,
                 status: 'answered'
             }
         }
@@ -146,50 +175,56 @@ const TeamPage = () => {
         }
         else {
             checkedAnswer.checked = false;
-            setPrevQuestionNumber(questionNumber);
-            setIsLoading(true);
+            setIsWaiting(true);
+            setBetValue(0);
+            setDuration(0);
         }
     }
 
-
-    useEffect(() => {
-        onLoad();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-
-
     return (
         <div className="team-container">
-            {(isLoading || questionStatus !== QuestionStatus.IN_PROGRESS) ?
-                <Loading msg="Waiting for host..." /> :
-                <>
-                    <div className="team-info">
-                        <div className="team-name">{teamName}</div>
-                        <div className="question-counter-container">
-                            <div className="question">Question:</div>
-                            <div className="question-number">{questionNumber}/{questions.length}</div>
-                        </div>
-                    </div>
-                    <div className="timer">{duration}</div>
-                    <div className="question-container">
-                        <div className="question-text">What answer did the team choose?</div>
-                        <div className="answers">
-                            <div className="answer-row">
-                                <Answer id={"choiceA"} text={"A"} />
-                                <Answer id={"choiceB"} text={"B"} />
-                            </div>
-                            <div className="answer-row">
-                                <Answer id={"choiceC"} text={"C"} />
-                                <Answer id={"choiceD"} text={"D"} />
-                            </div>
-                        </div>
+            {(isLoading) ?
+                <Loading msg="Loading..." /> :
+                (isWaiting) ?
+                    <Loading msg="Wait for the next question..." /> :
+                    (questionStatus === QuestionStatus.NOT_STARTED && betValue === 0) ?
                         <div className="submit-button-container">
-                            <InputBox id="bet" title="Bet EC" placeHolder="Enter bet EC here..." type="number" />
-                            <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleSubmit} />
-                        </div>
-                    </div>
-                </>}
+                            <div className="question-counter-container">
+                                <div className="question">Question:</div>
+                                <div className="question-number">{questionNumber}/{questions.length}</div>
+                            </div>
+                            <InputBox id="betInput" title="Bet EC" placeHolder="Enter bet EC here..." type="number" />
+                            <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleBet} />
+                        </div> :
+                        (questionStatus !== QuestionStatus.IN_PROGRESS) ?
+                            <Loading msg="Waiting for host to start the question..." /> :
+                            <>
+                                <div className="team-info">
+                                    <div className="team-name">{teamName}</div>
+                                    <div className="question-counter-container">
+                                        <div className="question">Question:</div>
+                                        <div className="question-number">{questionNumber}/{questions.length}</div>
+                                    </div>
+                                </div>
+                                <div className="timer">{duration}</div>
+                                <div className="question-container">
+                                    <div className="question-text">What answer did the team choose?</div>
+                                    <div className="answers">
+                                        <div className="answer-row">
+                                            <Answer id={"choiceA"} text={"A"} />
+                                            <Answer id={"choiceB"} text={"B"} />
+                                        </div>
+                                        <div className="answer-row">
+                                            <Answer id={"choiceC"} text={"C"} />
+                                            <Answer id={"choiceD"} text={"D"} />
+                                        </div>
+                                    </div>
+                                    <div className="submit-button-container">
+                                        <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleSubmit} />
+                                    </div>
+                                </div>
+                            </>
+            }
         </div>
     );
 };
