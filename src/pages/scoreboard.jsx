@@ -1,62 +1,57 @@
 import React, { useEffect } from 'react';
 import './style/scoreboard.css';
-import { onSnapshot, collection, query } from 'firebase/firestore';
-import { db } from '../firebase';
-import { doc, getDoc } from 'firebase/firestore';
-import RowScoreboard from '../components/row_scoreboard';
 import Loading from '../components/loading';
 import logo from "../assets/stem_club_logo.png";
-
-const QuestionStatus = {
-    NOT_STARTED: 'pending',
-    IN_PROGRESS: 'started',
-    FINISHED: 'ended'
-};
+import useQuestions from '../hooks/useQuestions';
+import useQuestionStatus from '../hooks/useQuestionStatus';
+import useQuestionCurrentIndex from '../hooks/useQuestionCurrentIndex';
+import useTeams from '../hooks/useTeams';
+import { QUESTION_STATUS } from '../constants/questionConst';
 
 function Scoreboard() {
-	const [sortedTeams, setSortedTeams] = React.useState([]);
-    const [questionStatus, setQuestionStatus] = React.useState(QuestionStatus.NOT_STARTED);
+	const questions = useQuestions();
+	const questionStatus = useQuestionStatus();
+	const currentQuestionIndex = useQuestionCurrentIndex();
+	const teams = useTeams();
+	const [duration, setDuration] = React.useState(null);
+    const [isLoading, setIsLoading] = React.useState(false);
 
-
-	const getScoreboard = async () => {
-		const questionSnap = await getDoc(doc(db, "game", "2024g"));
-		const teamRef = query(collection(db, "history"));
-		onSnapshot(teamRef, (docs) => {
-			const teams = [];
-			docs.forEach((doc) => {
-				teams.push(doc.data());
-			});
-			setSortedTeams(teams.sort((a, b) => {
-				return b.score - a.score;
-			},).map((team, index) => {
-				return (
-					<RowScoreboard
-					index={index + 1}
-					name={team.name}
-					correct={team.correctAnswers}
-					total={questionSnap.data().current_index}
-					score={team.credit}
-					key={index}
-					/>
-				);
-			}));
-			setQuestionStatus(questionSnap.data().status);
-
-		});
-	}
 
 	useEffect(() => {
-		getScoreboard();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+        if (questionStatus === QUESTION_STATUS.NOT_STARTED) {
+            setDuration(0);
+        }
+        if (questionStatus === QUESTION_STATUS.IN_PROGRESS) {
+            setDuration(questions[currentQuestionIndex - 1].duration);
+        }
+    }, [questionStatus, questions, currentQuestionIndex]);
+
+    useEffect(() => {
+        if (duration === 0) {
+            setDuration(null);
+        }
+
+        if (!duration) return;
+
+        const interval = setInterval(() => {
+            setDuration(duration - 1);
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [duration]);
+
+	useEffect(() => {
+		setIsLoading(questions.length === 0 || teams.length === 0);
+	}, [questions, teams]);
+
 
 	return (
 		<div className="scoreboard-container">
 			<img src={logo} alt="Logo" className="logo" />
+			<div className="scoreboard-timer">{duration}</div>
 			<div className='scoreboard-title-container'>
 				<span className="scoreboard-title">Scoreboard</span>
 			</div>
-			{sortedTeams.length === 0 ?
+			{isLoading ?
 				 <Loading msg="Loading scoreboard..." /> :
 				<>
 					<table>
@@ -66,7 +61,7 @@ function Scoreboard() {
 							<td><div className="label-correct-answer team-info-text">Correct</div></td>
 							<td><div className="label-score team-info-text">Score</div></td>
 						</tr>
-						{sortedTeams}
+						{teams}
 					</table>
 				</>
 			}

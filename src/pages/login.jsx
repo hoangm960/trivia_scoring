@@ -1,4 +1,4 @@
-import { React } from 'react';
+import { React, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import './style/login.css';
 import { doc, getDoc } from 'firebase/firestore';
@@ -32,6 +32,13 @@ const LoginPage = () => {
             alert("Wrong ID");
         }
     }
+
+    useEffect(() => {
+        if (localStorage.getItem("team")) {
+            history.push('/game_team');
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <div className="login-container">

@@ -9,7 +9,8 @@ export const Button = ({
     type,
     icon,
     stateProp,
-    onClick
+    onClick,
+    style
 }) => {
     const [state, dispatch] = useReducer(reducer, {
         type: type || "action",
@@ -19,7 +20,7 @@ export const Button = ({
     return (
         <button
             id={id}
-            className={`button ${state.state}`}
+            className={`button ${state.state} ${state.type}`}
             type={inputType}
             onMouseLeave={() => {
                 dispatch("mouse_leave");
@@ -28,6 +29,7 @@ export const Button = ({
                 dispatch("mouse_enter");
             }}
             onClick={onClick}
+            style={style}
         >
             {text != null && <div className="btn-text">{text}</div>}
 
