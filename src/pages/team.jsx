@@ -12,6 +12,7 @@ import { InputBox } from '../components/input_box';
 import useQuestions from '../hooks/useQuestions';
 import useQuestionStatus from '../hooks/useQuestionStatus';
 import useQuestionCurrentIndex from '../hooks/useQuestionCurrentIndex';
+import useTeamCurrentCredit from '../hooks/useTeamCurrentCredit';
 import { QUESTION_STATUS } from '../constants/questionConst';
 import useTeamName from '../hooks/useTeamName';
 
@@ -22,6 +23,7 @@ const TeamPage = () => {
     const teamName = useTeamName();
     const questionStatus = useQuestionStatus();
     const questions = useQuestions();
+    const currentCredit = useTeamCurrentCredit();
     const currentQuestionIndex = useQuestionCurrentIndex();
     const [duration, setDuration] = React.useState(null);
     const [betValue, setBetValue] = React.useState(0);
@@ -70,11 +72,6 @@ const TeamPage = () => {
     const handleBet = async () => {
         const betInput = document.getElementById('betInput');
         var betValue = +betInput.value;
-        const historyCollectionRef = collection(db, 'history');
-        const historyRef = doc(historyCollectionRef, teamID);
-        const historySnapshot = await getDoc(historyRef)
-        const historyData = historySnapshot.data()
-        const currentCredit = historyData.credit
 
         if (currentCredit === 0) {
             alert("You don't have enough credit to bet. Setting credit to 1.");
@@ -148,6 +145,10 @@ const TeamPage = () => {
                             <div className="question-counter-container">
                                 <div className="question">Question:</div>
                                 <div className="question-number">{currentQuestionIndex}/{questions.length}</div>
+                            </div>
+                            <div className="question-counter-container">
+                                <div className="question">Credits:</div>
+                                <div className="question-number">{currentCredit}</div>
                             </div>
                             <InputBox
                                 id="betInput"
