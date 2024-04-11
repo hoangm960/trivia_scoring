@@ -67,19 +67,17 @@ const TeamPage = () => {
         if (currentCredit === 0) {
             alert("You don't have enough credit to bet. Setting credit to 1.");
             setBetValue(1);
-            return;
-        }
-
-        // if bet is more than half of current credit or more than current credit
-        if ((betValue > (currentCredit + 1) / 2) && currentQuestionIndex <= 10) {
-            betValue = Math.floor((currentCredit + 1) / 2)
-        }
-        if (currentQuestionIndex > 10 && betValue > currentCredit) {
-            betValue = currentCredit
-            return
-        }
-
-        setBetValue(parseInt(betValue));
+        } else
+            // if bet is more than half of current credit or more than current credit
+            if ((betValue > (currentCredit + 1) / 2) && currentQuestionIndex <= 10) {
+                alert("For the first 10 questions, you can only bet half of your credit. Setting bet to half of your credit.");
+                setBetValue(Math.floor((currentCredit + 1) / 2));
+            } else
+                if (currentQuestionIndex > 10 && betValue > currentCredit) {
+                    alert("You can only bet your current credit. Setting bet to your current credit.");
+                    setBetValue(currentCredit);
+                } else
+                    setBetValue(parseInt(betValue));
     }
 
     const handleSubmit = async () => {
