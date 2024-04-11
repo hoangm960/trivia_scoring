@@ -124,11 +124,18 @@ const TeamPage = () => {
         const historySnapshot = await getDoc(historyRef)
         const historyData = historySnapshot.data()
         const currentCredit = historyData.credit
+
+        if (currentCredit === 0) {
+            alert("You don't have enough credit to bet. Setting credit to 1.");
+            setBetValue(1);
+            return;
+        }
+
         // if bet is more than half of current credit or more than current credit
-        if ((betValue > (currentCredit + 1) / 2) && currentCredit !== 0 && questionNumber <= 10) {
+        if ((betValue > (currentCredit + 1) / 2) && questionNumber <= 10) {
             betValue = Math.floor((currentCredit + 1) / 2)
         }
-        if (currentCredit !== 0 && questionNumber > 10 && betValue > currentCredit) {
+        if (questionNumber > 10 && betValue > currentCredit) {
             betValue = currentCredit
             return
         }
