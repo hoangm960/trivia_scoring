@@ -10,7 +10,7 @@
 }
 
 .team-info-text-2 {
-    color: var(--dark-green);
+    color: var(--green-white);
     text-align: center;
     vertical-align: middle;
     font-family: "Harding Text Web";
@@ -41,7 +41,7 @@
 .team-score  {
     border-radius: 1.25rem;
     border: 3px solid var(--dark-green);
-    background: var(--skin);
+    background: var(--green);
 }
 
 .team-rank, .team-name-scoreboard, .team-correct-answer, .team-score {

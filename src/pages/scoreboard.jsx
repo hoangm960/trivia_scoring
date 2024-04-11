@@ -16,7 +16,31 @@ const QuestionStatus = {
 function Scoreboard() {
 	const [sortedTeams, setSortedTeams] = React.useState([]);
     const [questionStatus, setQuestionStatus] = React.useState(QuestionStatus.NOT_STARTED);
+	const [duration, setDuration] = React.useState(null);
+	const [questionNumber, setQuestionNumber] = React.useState(0);
+    const [questions, setQuestions] = React.useState([]);
 
+	useEffect(() => {
+        if (questionStatus === QuestionStatus.NOT_STARTED) {
+            setDuration(0);
+        }
+        if (questionStatus === QuestionStatus.IN_PROGRESS) {
+            setDuration(questions[questionNumber - 1].duration);
+        }
+    }, [questionStatus, questions, questionNumber]);
+
+    useEffect(() => {
+        if (duration === 0) {
+            setDuration(null);
+        }
+
+        if (!duration) return;
+
+        const interval = setInterval(() => {
+            setDuration(duration - 1);
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [duration]);
 
 	const getScoreboard = async () => {
 		const questionSnap = await getDoc(doc(db, "game", "2024g"));
@@ -53,6 +77,7 @@ function Scoreboard() {
 	return (
 		<div className="scoreboard-container">
 			<img src={logo} alt="Logo" className="logo" />
+			<div className="timer">{duration</div>
 			<div className='scoreboard-title-container'>
 				<span className="scoreboard-title">Scoreboard</span>
 			</div>

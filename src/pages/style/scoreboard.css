@@ -29,6 +29,22 @@
     border-radius: 4rem;
 }
 
+.timer {
+    text-align: center;
+    font-size: 100px;
+    font-family: 'Montserrat';
+    font-weight: 300;
+    word-wrap: break-word;
+
+    color: var(--dark-green);
+    letter-spacing: 0;
+    line-height: normal;
+
+    position: absolute;
+    top: 2.5rem;
+    right: 8rem;
+}
+
 .scoreboard-title-container {
     display: flex;
     padding: 0.1rem;
@@ -47,7 +63,7 @@
     flex-direction: column;
     justify-content: center;
 
-    color: var(--skin);
+    color: var(--white);
     text-align: center;
     font-family: "Harding Text Web";
     font-size: 3rem;
