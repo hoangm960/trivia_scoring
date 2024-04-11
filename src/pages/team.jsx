@@ -19,6 +19,7 @@ const QuestionStatus = {
 const TeamPage = () => {
     const history = useHistory();
     const [isLoading, setIsLoading] = React.useState(false);
+    const [isWaiting, setIsWaiting] = React.useState(false);
     const [teamName, setTeamName] = React.useState("Team Name");
     const [questionNumber, setQuestionNumber] = React.useState(0);
     const [prevQuestionNumber, setPrevQuestionNumber] = React.useState(0);
@@ -35,22 +36,26 @@ const TeamPage = () => {
         updateQuestionStatus();
         updateTeamName();
         updateQuestionNumber();
-        await getCorrectAnswers();
+        await getQuestionInfo();
     }
 
     const updateQuestionStatus = () => {
         const gameRef = doc(db, "game", "2024g");
         onSnapshot(gameRef, (gameSnap) => {
             setQuestionStatus(gameSnap.data().status);
-            if (gameSnap.data().status === QuestionStatus.IN_PROGRESS) {
-                // console.log(questions);
-                // const questionRef = doc(db, "questions", questions[gameSnap.data().current_index - 1].questionID);
-                // getDoc(questionRef).then((questionSnap) => {
-                setDuration(10);
-                // });
-            }
         });
     }
+
+    useEffect(() => {
+        if (questionStatus === QuestionStatus.NOT_STARTED) {
+            setIsWaiting(false);
+            setBetValue(0);
+            setDuration(0);
+        }
+        if (questionStatus === QuestionStatus.IN_PROGRESS) {
+            setDuration(questions[questionNumber - 1].duration);
+        }
+    }, [questionStatus, questions, questionNumber]);
 
     useEffect(() => {
         if (duration === 0) {
@@ -81,7 +86,7 @@ const TeamPage = () => {
         });
     }
 
-    const getCorrectAnswers = async () => {
+    const getQuestionInfo = async () => {
         const gameRef = doc(db, "game", "2024g");
         const questionRef = collection(db, "questions");
         const questionInGameSnap = await getDocs(query(
@@ -89,12 +94,13 @@ const TeamPage = () => {
             where("game", "==", gameRef.id))
         );
         questionInGameSnap.forEach(async (question) => {
-            const currentQuestionID = question.id;
-            const currentQuestionIndex = question.data().index;
-            const currentQuestionRef = doc(db, "questions", currentQuestionID);
+            const questionID = question.id;
+            const questionIndex = question.data().index;
+            const questionDuration = question.data().duration;
+            const currentQuestionRef = doc(db, "questions", questionID);
             const currentQuestionSnap = await getDoc(currentQuestionRef);
             const correctAnswer = currentQuestionSnap.data().answer;
-            setQuestions(answers => [...answers, { "answer": correctAnswer, "questionID": currentQuestionID, "index": currentQuestionIndex }]);
+            setQuestions(answers => [...answers, { "answer": correctAnswer, "questionID": questionID, "duration": questionDuration, "index": questionIndex }]);
         });
     }
 
@@ -167,8 +173,9 @@ const TeamPage = () => {
         else {
             checkedAnswer.checked = false;
             setPrevQuestionNumber(questionNumber);
-            setIsLoading(true);
+            setIsWaiting(true);
             setBetValue(0);
+            setDuration(0);
         }
     }
 
@@ -184,43 +191,46 @@ const TeamPage = () => {
         <div className="team-container">
             {(isLoading) ?
                 <Loading msg="Loading..." /> :
-                (questionStatus === QuestionStatus.NOT_STARTED && betValue === 0) ?
-                    <div className="submit-button-container">
-                        <div className="question-counter-container">
-                            <div className="question">Question:</div>
-                            <div className="question-number">{questionNumber}/{questions.length}</div>
-                        </div>
-                        <InputBox id="betInput" title="Bet EC" placeHolder="Enter bet EC here..." type="number" />
-                        <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleBet} />
-                    </div> :
-                    (questionStatus !== QuestionStatus.IN_PROGRESS) ?
-                        <Loading msg="Waiting for host..." /> :
-                        <>
-                            <div className="team-info">
-                                <div className="team-name">{teamName}</div>
-                                <div className="question-counter-container">
-                                    <div className="question">Question:</div>
-                                    <div className="question-number">{questionNumber}/{questions.length}</div>
-                                </div>
+                (isWaiting) ?
+                    <Loading msg="Wait for the next question..." /> :
+                    (questionStatus === QuestionStatus.NOT_STARTED && betValue === 0) ?
+                        <div className="submit-button-container">
+                            <div className="question-counter-container">
+                                <div className="question">Question:</div>
+                                <div className="question-number">{questionNumber}/{questions.length}</div>
                             </div>
-                            <div className="timer">{duration}</div>
-                            <div className="question-container">
-                                <div className="question-text">What answer did the team choose?</div>
-                                <div className="answers">
-                                    <div className="answer-row">
-                                        <Answer id={"choiceA"} text={"A"} />
-                                        <Answer id={"choiceB"} text={"B"} />
-                                    </div>
-                                    <div className="answer-row">
-                                        <Answer id={"choiceC"} text={"C"} />
-                                        <Answer id={"choiceD"} text={"D"} />
+                            <InputBox id="betInput" title="Bet EC" placeHolder="Enter bet EC here..." type="number" />
+                            <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleBet} />
+                        </div> :
+                        (questionStatus !== QuestionStatus.IN_PROGRESS) ?
+                            <Loading msg="Waiting for host to start the question..." /> :
+                            <>
+                                <div className="team-info">
+                                    <div className="team-name">{teamName}</div>
+                                    <div className="question-counter-container">
+                                        <div className="question">Question:</div>
+                                        <div className="question-number">{questionNumber}/{questions.length}</div>
                                     </div>
                                 </div>
-                                <div className="submit-button-container">
-                                    <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleSubmit} />
+                                <div className="timer">{duration}</div>
+                                <div className="question-container">
+                                    <div className="question-text">What answer did the team choose?</div>
+                                    <div className="answers">
+                                        <div className="answer-row">
+                                            <Answer id={"choiceA"} text={"A"} />
+                                            <Answer id={"choiceB"} text={"B"} />
+                                        </div>
+                                        <div className="answer-row">
+                                            <Answer id={"choiceC"} text={"C"} />
+                                            <Answer id={"choiceD"} text={"D"} />
+                                        </div>
+                                    </div>
+                                    <div className="submit-button-container">
+                                        <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleSubmit} />
+                                    </div>
                                 </div>
-                            </div>
-                        </>}
+                            </>
+            }
         </div>
     );
 };
