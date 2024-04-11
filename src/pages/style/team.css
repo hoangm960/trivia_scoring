@@ -8,7 +8,7 @@
 }
 
 .team-container {
-    height: 90vh;
+    height: 100vh;
     align-items: center;
     background-color: var(--white);
     display: flex;

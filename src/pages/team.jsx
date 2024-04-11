@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import './style/team.css';
 import { Button } from '../components/button';
 import CheckIcon from '../assets/check.png';
+import LogOutIcon from '../assets/logout.png';
 import { Answer } from '../components/radio_answer';
 import { getDoc, doc, collection, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -24,6 +25,7 @@ const TeamPage = () => {
     const currentQuestionIndex = useQuestionCurrentIndex();
     const [duration, setDuration] = React.useState(null);
     const [betValue, setBetValue] = React.useState(0);
+    const [isOverTime, setIsOverTime] = React.useState(false);
     const teamID = localStorage.getItem("team");
 
     useEffect(() => {
@@ -35,15 +37,21 @@ const TeamPage = () => {
             setIsWaiting(false);
             setBetValue(0);
             setDuration(0);
-        }
-        if (questionStatus === QUESTION_STATUS.IN_PROGRESS) {
+        } else if (questionStatus === QUESTION_STATUS.IN_PROGRESS) {
             setDuration(questions[currentQuestionIndex - 1].duration);
+        } else if (questionStatus === QUESTION_STATUS.FINISHED) {
+            // add 3 seconds buffer for user to input answer
+            if (isOverTime)
+                setTimeout(() => {
+                    setIsOverTime(false);
+                }, 3000);
         }
-    }, [questionStatus, questions, currentQuestionIndex]);
+    }, [questionStatus, questions, currentQuestionIndex, isOverTime]);
 
     useEffect(() => {
         if (duration === 0) {
             setDuration(null);
+            setIsOverTime(true);
         }
 
         if (!duration) return;
@@ -53,6 +61,11 @@ const TeamPage = () => {
         }, 1000);
         return () => clearInterval(interval);
     }, [duration]);
+
+    const handleLogOut = async () => {
+        localStorage.removeItem("team");
+        history.push('/');
+    }
 
     const handleBet = async () => {
         const betInput = document.getElementById('betInput');
@@ -136,10 +149,20 @@ const TeamPage = () => {
                                 <div className="question">Question:</div>
                                 <div className="question-number">{currentQuestionIndex}/{questions.length}</div>
                             </div>
-                            <InputBox id="betInput" title="Bet EC" placeHolder="Enter bet EC here..." type="number" />
-                            <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleBet} />
+                            <InputBox
+                                id="betInput"
+                                title="Bet EC"
+                                placeHolder="Enter bet EC here..."
+                                type="number"
+                            />
+                            <Button
+                                text="Submit"
+                                icon={CheckIcon}
+                                inputType="submit"
+                                onClick={handleBet}
+                            />
                         </div> :
-                        (questionStatus !== QUESTION_STATUS.IN_PROGRESS) ?
+                        (questionStatus !== QUESTION_STATUS.IN_PROGRESS || !isOverTime) ?
                             <Loading msg="Waiting for host to start the question..." /> :
                             <>
                                 <div className="team-info">
@@ -163,11 +186,23 @@ const TeamPage = () => {
                                         </div>
                                     </div>
                                     <div className="submit-button-container">
-                                        <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleSubmit} />
+                                        <Button
+                                            text="Submit"
+                                            icon={CheckIcon}
+                                            inputType="submit"
+                                            onClick={handleSubmit}
+                                        />
                                     </div>
                                 </div>
                             </>
             }
+            <Button
+                id="logout"
+                type="destructive"
+                icon={LogOutIcon}
+                text="Logout"
+                onClick={handleLogOut}
+            />
         </div>
     );
 };

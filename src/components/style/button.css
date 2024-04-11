@@ -14,8 +14,7 @@
 .button .btn-text {
     all: unset;
     box-sizing: border-box;
-    color: var(--white);
-    font-family: "Montserrat";
+    font-family: "Montserrat", Helvetica;
     font-size: 35px;
     font-weight: 700;
     letter-spacing: 0;
@@ -30,11 +29,74 @@
     position: relative !important;
 }
 
-.button.default {
-    background-color: var(--dark-purple);
+.button.active {
+    box-shadow: 0px 4px 4px #00000040;
 }
 
 .button.hover {
-    background-color: var(--deep-dark-purple);
     box-shadow: 0px 4px 20px 2px #000000;
+}
+
+.button.default.action {
+    background-color: var(--dark-purple);
+}
+
+.button.hover.positive {
+    background-color: #7fb88c;
+}
+
+.button.active.destructive {
+    background-color: var(--orange);
+}
+
+.button.positive.default {
+    background-color: #a1e6b0;
+}
+
+.button.hover.destructive {
+    background-color: var(--dark-red-pink);
+}
+
+.button.active.disable {
+    background-color: #00000033;
+}
+
+.button.action.active {
+    background-color: var(--deep-dark-purple);
+}
+
+.button.default.destructive {
+    background-color: var(--red-pink);
+}
+
+.button.hover.disable {
+    background-color: #445953;
+}
+
+.button.hover.action {
+    background-color: var(--deep-dark-purple);
+}
+
+.button.default.disable {
+    background-color: #445953;
+}
+
+.button.positive.active {
+    background-color: #00000026;
+}
+
+.button.destructive .btn-text {
+    color: var(--white);
+}
+
+.button.action .btn-text {
+    color: var(--white);
+}
+
+.button.disable .btn-text {
+    color: #dffcf6;
+}
+
+.button.positive .btn-text {
+    color: var(--deep-dark-purple);
 }
