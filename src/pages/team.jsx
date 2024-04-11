@@ -26,7 +26,6 @@ const TeamPage = () => {
     const [betValue, setBetValue] = React.useState(0);
     const teamID = localStorage.getItem("team");
 
-
     useEffect(() => {
         setIsLoading(questions.length === 0 || teamName === "Team Name");
     }, [questions, teamName]);
