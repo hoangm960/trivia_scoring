@@ -70,13 +70,9 @@ const TeamPage = () => {
         setTeamName(teamSnap.data().name);
     }
 
-
     useEffect(
         () => {
-            if (questions.length !== 0)
-                questions.sort((a, b) => a.index - b.index);
-            else
-                setIsLoading(true);
+            setIsLoading(questions.length === 0);
         },
         [questions]
     );

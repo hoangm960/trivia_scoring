@@ -6,6 +6,9 @@ import { doc, getDoc } from 'firebase/firestore';
 import RowScoreboard from '../components/row_scoreboard';
 import Loading from '../components/loading';
 import logo from "../assets/stem_club_logo.png";
+import useQuestions from '../hooks/useQuestions';
+import useQuestionStatus from '../hooks/useQuestionStatus';
+import useQuestionCurrentIndex from '../hooks/useQuestionCurrentIndex';
 
 const QuestionStatus = {
     NOT_STARTED: 'pending',
@@ -15,19 +18,32 @@ const QuestionStatus = {
 
 function Scoreboard() {
 	const [sortedTeams, setSortedTeams] = React.useState([]);
-    const [questionStatus, setQuestionStatus] = React.useState(QuestionStatus.NOT_STARTED);
+	const questions = useQuestions();
+	const questionStatus = useQuestionStatus();
+	const currentQuestionIndex = useQuestionCurrentIndex();
 	const [duration, setDuration] = React.useState(null);
-	const [questionNumber, setQuestionNumber] = React.useState(0);
-    const [questions, setQuestions] = React.useState([]);
+    const [isLoading, setIsLoading] = React.useState(false);
+
+
+	const onLoad = async () => {
+        setIsLoading(true);
+        getScoreboard();
+        setIsLoading(false);
+    }
+
+	useEffect(() => {
+		onLoad();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
         if (questionStatus === QuestionStatus.NOT_STARTED) {
             setDuration(0);
         }
         if (questionStatus === QuestionStatus.IN_PROGRESS) {
-            setDuration(questions[questionNumber - 1].duration);
+            setDuration(questions[currentQuestionIndex - 1].duration);
         }
-    }, [questionStatus, questions, questionNumber]);
+    }, [questionStatus, questions, currentQuestionIndex]);
 
     useEffect(() => {
         if (duration === 0) {
@@ -43,14 +59,14 @@ function Scoreboard() {
     }, [duration]);
 
 	const getScoreboard = async () => {
-		const questionSnap = await getDoc(doc(db, "game", "2024g"));
+		const gameSnap = await getDoc(doc(db, "game", "2024g"));
 		const teamRef = query(collection(db, "history"));
 		onSnapshot(teamRef, (docs) => {
 			const teams = [];
 			docs.forEach((doc) => {
 				teams.push(doc.data());
 			});
-			setSortedTeams(teams.sort((a, b) => {
+			const sortedTeams = teams.sort((a, b) => {
 				return b.score - a.score;
 			},).map((team, index) => {
 				return (
@@ -58,21 +74,17 @@ function Scoreboard() {
 					index={index + 1}
 					name={team.name}
 					correct={team.correctAnswers}
-					total={questionSnap.data().current_index}
+					total={gameSnap.data().current_index}
 					score={team.credit}
 					key={index}
 					/>
 				);
-			}));
-			setQuestionStatus(questionSnap.data().status);
-
+			});
+			console.log(sortedTeams);
+			setSortedTeams(sortedTeams);
 		});
 	}
 
-	useEffect(() => {
-		getScoreboard();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	return (
 		<div className="scoreboard-container">
@@ -81,7 +93,7 @@ function Scoreboard() {
 			<div className='scoreboard-title-container'>
 				<span className="scoreboard-title">Scoreboard</span>
 			</div>
-			{sortedTeams.length === 0 ?
+			{isLoading ?
 				 <Loading msg="Loading scoreboard..." /> :
 				<>
 					<table>

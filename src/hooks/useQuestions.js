@@ -26,7 +26,8 @@ export default function useQuestions() {
                 "index": questionIndex
             });
         });
-        setQuestions(tmpQuestions)
+        tmpQuestions.sort((a, b) => a.index - b.index);
+        setQuestions(tmpQuestions);
     }, []);
     return questions;
 }
