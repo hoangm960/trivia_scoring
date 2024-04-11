@@ -25,6 +25,7 @@ const TeamPage = () => {
     const [questions, setQuestions] = React.useState([]);
     const [questionStatus, setQuestionStatus] = React.useState(QuestionStatus.NOT_STARTED);
     const [duration, setDuration] = React.useState(null);
+    const [betValue, setBetValue] = React.useState(0);
     const teamID = localStorage.getItem("team");
     const teamRef = doc(db, "history", teamID);
 
@@ -89,11 +90,41 @@ const TeamPage = () => {
         );
         questionInGameSnap.forEach(async (question) => {
             const currentQuestionID = question.id;
+            const currentQuestionIndex = question.data().index;
             const currentQuestionRef = doc(db, "questions", currentQuestionID);
             const currentQuestionSnap = await getDoc(currentQuestionRef);
             const correctAnswer = currentQuestionSnap.data().answer;
-            setQuestions(answers => [...answers, { "answer": correctAnswer, "questionID": currentQuestionID }]);
+            setQuestions(answers => [...answers, { "answer": correctAnswer, "questionID": currentQuestionID, "index": currentQuestionIndex }]);
         });
+    }
+
+
+    useEffect(
+        () => {
+            if (questions.length !== 0)
+                questions.sort((a, b) => a.index - b.index);
+        },
+        [questions]
+    );
+
+    const handleBet = async () => {
+        const betInput = document.getElementById('betInput');
+        var betValue = +betInput.value;
+        const historyCollectionRef = collection(db, 'history');
+        const historyRef = doc(historyCollectionRef, teamID);
+        const historySnapshot = await getDoc(historyRef)
+        const historyData = historySnapshot.data()
+        const currentCredit = historyData.credit
+        // if bet is more than half of current credit or more than current credit
+        if ((betValue > (currentCredit + 1) / 2) && currentCredit !== 0 && questionNumber <= 10) {
+            betValue = Math.floor((currentCredit + 1) / 2)
+        }
+        if (currentCredit !== 0 && questionNumber > 10 && betValue > currentCredit) {
+            betValue = currentCredit
+            return
+        }
+
+        setBetValue(betValue);
     }
 
     const handleSubmit = async () => {
@@ -118,20 +149,11 @@ const TeamPage = () => {
         const historyRef = doc(historyCollectionRef, teamID);
         const historySnapshot = await getDoc(historyRef)
         const historyData = historySnapshot.data()
-        const currentCredit = historyData.credit
-        // if bet is more than half of current credit or more than current credit
-        if ((betValue > (currentCredit + 1) / 2) && currentCredit !== 0 && questionNumber <= 10) {
-            betValue = Math.floor((currentCredit + 1) / 2)
-        }
-        if (currentCredit !== 0 && questionNumber > 10 && betValue > currentCredit) {
-            betValue = currentCredit
-            return
-        }
 
         const newHistory = {
             ...historyData.history, [currentQuestion.questionID]: {
-                answer: isCorrect,
                 bet: betValue,
+                answer: isCorrect,
                 status: 'answered'
             }
         }
@@ -146,6 +168,7 @@ const TeamPage = () => {
             checkedAnswer.checked = false;
             setPrevQuestionNumber(questionNumber);
             setIsLoading(true);
+            setBetValue(0);
         }
     }
 
@@ -159,34 +182,45 @@ const TeamPage = () => {
 
     return (
         <div className="team-container">
-            {(isLoading || questionStatus !== QuestionStatus.IN_PROGRESS) ?
-                <Loading msg="Waiting for host..." /> :
-                <>
-                    <div className="team-info">
-                        <div className="team-name">{teamName}</div>
+            {(isLoading) ?
+                <Loading msg="Loading..." /> :
+                (questionStatus === QuestionStatus.NOT_STARTED && betValue === 0) ?
+                    <div className="submit-button-container">
                         <div className="question-counter-container">
                             <div className="question">Question:</div>
                             <div className="question-number">{questionNumber}/{questions.length}</div>
                         </div>
-                    </div>
-                    <div className="timer">{duration}</div>
-                    <div className="question-container">
-                        <div className="question-text">What answer did the team choose?</div>
-                        <div className="answers">
-                            <div className="answer-row">
-                                <Answer id={"choiceA"} text={"A"} />
-                                <Answer id={"choiceB"} text={"B"} />
+                        <InputBox id="betInput" title="Bet EC" placeHolder="Enter bet EC here..." type="number" />
+                        <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleBet} />
+                    </div> :
+                    (questionStatus !== QuestionStatus.IN_PROGRESS) ?
+                        <Loading msg="Waiting for host..." /> :
+                        <>
+                            <div className="team-info">
+                                <div className="team-name">{teamName}</div>
+                                <div className="question-counter-container">
+                                    <div className="question">Question:</div>
+                                    <div className="question-number">{questionNumber}/{questions.length}</div>
+                                </div>
                             </div>
-                            <div className="answer-row">
-                                <Answer id={"choiceC"} text={"C"} />
-                                <Answer id={"choiceD"} text={"D"} />
+                            <div className="timer">{duration}</div>
+                            <div className="question-container">
+                                <div className="question-text">What answer did the team choose?</div>
+                                <div className="answers">
+                                    <div className="answer-row">
+                                        <Answer id={"choiceA"} text={"A"} />
+                                        <Answer id={"choiceB"} text={"B"} />
+                                    </div>
+                                    <div className="answer-row">
+                                        <Answer id={"choiceC"} text={"C"} />
+                                        <Answer id={"choiceD"} text={"D"} />
+                                    </div>
+                                </div>
+                                <div className="submit-button-container">
+                                    <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleSubmit} />
+                                </div>
                             </div>
-                        </div>
-                        <div className="submit-button-container">
-                            <Button text="Submit" icon={CheckIcon} inputType="submit" onClick={handleSubmit} />
-                        </div>
-                    </div>
-                </>}
+                        </>}
         </div>
     );
 };
