@@ -3,11 +3,12 @@ import './style/team.css';
 import { Button } from '../components/button';
 import CheckIcon from '../assets/check.png';
 import { Answer } from '../components/radio_answer';
-import { getDoc, doc, onSnapshot, where, query, collection, getDocs, updateDoc } from 'firebase/firestore';
+import { getDoc, doc, onSnapshot, collection, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import Loading from '../components/loading';
 import { useHistory } from 'react-router-dom';
 import { InputBox } from '../components/input_box';
+import getQuestion from '../helper/getQuestion';
 
 const QuestionStatus = {
     NOT_STARTED: 'pending',
@@ -35,7 +36,8 @@ const TeamPage = () => {
         updateQuestionStatus();
         updateTeamName();
         updateQuestionNumber();
-        await getQuestionInfo();
+        setQuestions(await getQuestion());
+        // await getQuestionInfo();
         setIsLoading(false);
     }
 
@@ -88,30 +90,13 @@ const TeamPage = () => {
         });
     }
 
-    const getQuestionInfo = async () => {
-        const gameRef = doc(db, "game", "2024g");
-        const questionRef = collection(db, "questions");
-        const questionInGameSnap = await getDocs(query(
-            questionRef,
-            where("game", "==", gameRef.id))
-        );
-        questionInGameSnap.forEach(async (question) => {
-            const questionID = question.id;
-            const questionIndex = question.data().index;
-            const questionDuration = question.data().duration;
-            const currentQuestionRef = doc(db, "questions", questionID);
-            const currentQuestionSnap = await getDoc(currentQuestionRef);
-            const correctAnswer = currentQuestionSnap.data().answer;
-            setQuestions(answers => [...answers, { "answer": correctAnswer, "questionID": questionID, "duration": questionDuration, "index": questionIndex }]);
-        });
-        return;
-    }
-
 
     useEffect(
         () => {
             if (questions.length !== 0)
                 questions.sort((a, b) => a.index - b.index);
+            else
+                setIsLoading(true);
         },
         [questions]
     );
