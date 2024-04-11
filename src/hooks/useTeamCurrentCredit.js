@@ -1,4 +1,4 @@
-import { getDoc, doc, collection } from 'firebase/firestore';
+import { doc, collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useState, useEffect } from 'react';
 
@@ -9,9 +9,9 @@ export default function useTeamCurrentCredit() {
         const teamID = localStorage.getItem("team");
         const historyCollectionRef = collection(db, 'history');
         const historyRef = doc(historyCollectionRef, teamID);
-        const historySnapshot = await getDoc(historyRef);
-        const historyData = historySnapshot.data();
-        setTeamCurrentCredit(historyData.credit);
+        onSnapshot(historyRef, (doc) => {
+            setTeamCurrentCredit(doc.data().credit);
+        });
     }
 
     useEffect(() => {

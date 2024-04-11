@@ -146,9 +146,15 @@ const TeamPage = () => {
                                 <div className="question">Question:</div>
                                 <div className="question-number">{currentQuestionIndex}/{questions.length}</div>
                             </div>
-                            <div className="question-counter-container">
-                                <div className="question">Credits:</div>
-                                <div className="question-number">{currentCredit}</div>
+                            <div className="team-info-container">
+                                <div className="info-container">
+                                    <div className="team-label">Team:</div>
+                                    <div className="team-name">{teamName}</div>
+                                </div>
+                                <div className="info-container">
+                                    <div className="team-label">Credits:</div>
+                                    <div className="team-value">{currentCredit}</div>
+                                </div>
                             </div>
                             <InputBox
                                 id="betInput"
