@@ -19,7 +19,6 @@ const TeamPage = () => {
     const [teamName, setTeamName] = React.useState("Team Name");
     const [questionNumber, setQuestionNumber] = React.useState(0);
     const questionStatus = useQuestionStatus();
-
     const questions = useQuestions();
     const [duration, setDuration] = React.useState(null);
     const [betValue, setBetValue] = React.useState(0);
@@ -31,19 +30,17 @@ const TeamPage = () => {
         setIsLoading(true);
         updateTeamName();
         updateQuestionNumber();
-        // await getQuestionInfo();
         setIsLoading(false);
     }
+    useEffect(() => {
+        onLoad();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
         setIsLoading(questions.length === 0);
 
     }, [questions]);
-
-    useEffect(() => {
-        onLoad();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     useEffect(() => {
         if (questionStatus === QUESTION_STATUS.NOT_STARTED) {
