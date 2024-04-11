@@ -140,7 +140,7 @@ const TeamPage = () => {
             return
         }
 
-        setBetValue(betValue);
+        setBetValue(parseInt(betValue));
     }
 
     const handleSubmit = async () => {
