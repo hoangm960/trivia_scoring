@@ -12,34 +12,24 @@ import useQuestions from '../hooks/useQuestions';
 import useQuestionStatus from '../hooks/useQuestionStatus';
 import useQuestionCurrentIndex from '../hooks/useQuestionCurrentIndex';
 import { QUESTION_STATUS } from '../constants/questionConst';
+import useTeamName from '../hooks/useTeamName';
 
 const TeamPage = () => {
     const history = useHistory();
     const [isLoading, setIsLoading] = React.useState(false);
     const [isWaiting, setIsWaiting] = React.useState(false);
-    const [teamName, setTeamName] = React.useState("Team Name");
+    const teamName = useTeamName();
     const questionStatus = useQuestionStatus();
     const questions = useQuestions();
     const currentQuestionIndex = useQuestionCurrentIndex();
     const [duration, setDuration] = React.useState(null);
     const [betValue, setBetValue] = React.useState(0);
     const teamID = localStorage.getItem("team");
-    const teamRef = doc(db, "history", teamID);
 
-
-    const onLoad = async () => {
-        setIsLoading(true);
-        updateTeamName();
-        setIsLoading(false);
-    }
-    useEffect(() => {
-        onLoad();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     useEffect(() => {
-        setIsLoading(questions.length === 0);
-    }, [questions]);
+        setIsLoading(questions.length === 0 || teamName === "Team Name");
+    }, [questions, teamName]);
 
     useEffect(() => {
         if (questionStatus === QUESTION_STATUS.NOT_STARTED) {
@@ -64,18 +54,6 @@ const TeamPage = () => {
         }, 1000);
         return () => clearInterval(interval);
     }, [duration]);
-
-    const updateTeamName = async () => {
-        const teamSnap = await getDoc(teamRef);
-        setTeamName(teamSnap.data().name);
-    }
-
-    useEffect(
-        () => {
-            setIsLoading(questions.length === 0);
-        },
-        [questions]
-    );
 
     const handleBet = async () => {
         const betInput = document.getElementById('betInput');
