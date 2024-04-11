@@ -1,7 +1,7 @@
 .scoreboard-container {
     display: flex;
-    width: 100%; 
-    height: 100%; 
+    width: 100%;
+    height: 100%;
     padding: 5.5625rem 0.3125rem;
     flex-direction: column;
     justify-content: flex-start;
@@ -29,7 +29,7 @@
     border-radius: 4rem;
 }
 
-.timer {
+.scoreboard-timer {
     text-align: center;
     font-size: 100px;
     font-family: 'Montserrat';

@@ -47,7 +47,7 @@ function Scoreboard() {
 	return (
 		<div className="scoreboard-container">
 			<img src={logo} alt="Logo" className="logo" />
-			<div className="timer">{duration}</div>
+			<div className="scoreboard-timer">{duration}</div>
 			<div className='scoreboard-title-container'>
 				<span className="scoreboard-title">Scoreboard</span>
 			</div>
