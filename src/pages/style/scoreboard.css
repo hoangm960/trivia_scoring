@@ -21,49 +21,49 @@
 .logo {
     display: flex;
     position: absolute;
-    top: 1rem;
-    left: 1rem;
+    top: 4rem;
+    left: 4rem;
     width: 100%;
-    max-width: 70px;
+    max-width: 100px;
     min-width: 70px;
     border-radius: 4rem;
 }
 
 .scoreboard-timer {
+    color: #1E541E;
     text-align: center;
-    font-size: 100px;
-    font-family: 'Montserrat';
-    font-weight: 300;
-    word-wrap: break-word;
-
-    color: var(--dark-green);
-    letter-spacing: 0;
+    font-family: "Harding Text Web";
+    font-size: 7rem;
+    font-style: normal;
+    font-weight: 400;
     line-height: normal;
 
     position: absolute;
-    top: 2.5rem;
-    right: 8rem;
+    top: 4rem;
+    right: 10rem;
+
 }
 
 .scoreboard-title-container {
     display: flex;
-    padding: 0.1rem;
+    padding: 2.1875rem 2rem;
     justify-content: center;
     align-items: center;
-    gap: auto;
-    border-radius: 0.125rem;
-    border: 6px solid var(--dark-green);
-    background: var(--green);
+    gap: 0.625rem;
+    border-radius: 1.75rem;
+    border: 0px solid var(--Dark-Green, #70785D);
+    background: rgba(30, 84, 30, 0.87);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
 
 .scoreboard-title {
     display: flex;
     width: 20rem;
-    height: 3.5rem;
+    height: 1rem;
     flex-direction: column;
     justify-content: center;
 
-    color: var(--white);
+    color: var(--White, #FFF9FE);
     text-align: center;
     font-family: "Harding Text Web";
     font-size: 3rem;
@@ -76,29 +76,29 @@
 .label-rank {
     margin-bottom: 1rem;
     border-radius: 1.25rem 1.25rem 2.5rem 2.5rem;
-    border: 3px solid var(--dark-green);
-    background: var(--dark-green);
+    border: 5px solid #C9D8C7;
+    background: #749A71;
 }
 
 .label-name-scoreboard {
     margin-bottom: 1rem;
     border-radius: 1.25rem 1.25rem 1.875rem 1.875rem;
-    border: 3px solid var(--dark-green);
-    background: var(--dark-green);
+    border: 4px solid rgba(255, 255, 255, 0.68);
+    background: rgba(110, 150, 110, 0.73);
 }
 
 .label-correct-answer {
     margin-bottom: 1rem;
-    border-radius: 1.25rem 1.25rem 2.5rem 2.5rem;
-    border: 3px solid var(--dark-green);
-    background: var(--dark-green);
+    border-radius: 2.5rem;
+    border: 4px solid #DAE4D6;
+    background: #749A71;
 }
 
 .label-score {
     margin-bottom: 1rem;
     border-radius: 1.25rem 1.25rem 2.5rem 2.5rem;
-    border: 3px solid var(--dark-green);
-    background: var(--dark-green);
+    border: 5px solid #DAE4D6;
+    background: #749A71;
 }
 
 @supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {

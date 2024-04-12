@@ -47,19 +47,19 @@ function Scoreboard() {
 	return (
 		<div className="scoreboard-container">
 			<img src={logo} alt="Logo" className="logo" />
-			<div className="scoreboard-timer">{duration}</div>
+			<div className="scoreboard-timer">10</div>
 			<div className='scoreboard-title-container'>
-				<span className="scoreboard-title">Scoreboard</span>
+				<span className="scoreboard-title">SCOREBOARD</span>
 			</div>
 			{isLoading ?
 				 <Loading msg="Loading scoreboard..." /> :
 				<>
 					<table>
 						<tr className='column-labels'>
-							<td><div className="label-rank team-info-text">Rank</div></td>
-							<td><div className="label-name-scoreboard team-info-text">Team name</div></td>
-							<td><div className="label-correct-answer team-info-text">Correct</div></td>
-							<td><div className="label-score team-info-text">Score</div></td>
+							<td><div className="label-rank team-info-text-2">Rank</div></td>
+							<td><div className="label-name-scoreboard team-info-text-2">Team name</div></td>
+							<td><div className="label-correct-answer team-info-text-2">Correct</div></td>
+							<td><div className="label-score team-info-text-2">Score</div></td>
 						</tr>
 						{teams}
 					</table>

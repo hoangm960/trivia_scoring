@@ -1,47 +1,45 @@
-.team-info-text {
-    color: var(--green-white);
+.team-info-text-1 {
+    color: #1E541E;
     text-align: center;
-    vertical-align: middle;
     font-family: "Harding Text Web";
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     font-style: normal;
-    font-weight: 400;
+    font-weight: 500;
     line-height: normal;
 }
 
 .team-info-text-2 {
-    color: var(--green-white);
+    color: var(--White, #FFF9FE);
     text-align: center;
-    vertical-align: middle;
     font-family: "Harding Text Web";
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     font-style: normal;
-    font-weight: 400;
+    font-weight: 500;
     line-height: normal;
 }
 
 .team-rank  {
     border-radius: 3.75rem;
-    border: 3px solid var(--dark-green);
-    background: var(--green);
+    border: 3px solid var(--Dark-Green, #70785D);
+    background: rgba(227, 245, 226, 0.80);
 }
 
 .team-name-scoreboard  {
     border-radius: 1.25rem;
-    border: 3px solid var(--dark-green);
-    background: var(--golden);
+    border: 3px solid var(--Dark-Green, #70785D);
+    background: rgba(11, 9, 18, 0.62);
 }
 
 .team-correct-answer {
     border-radius: 1.25rem;
-    border: 3px solid var(--dark-green);
-    background: var(--skin);
+    border: 3px solid var(--Dark-Green, #70785D);
+    background: #E3F5E2;
 }
 
 .team-score  {
     border-radius: 1.25rem;
-    border: 3px solid var(--dark-green);
-    background: var(--green);
+    border: 3px solid var(--Dark-Green, #70785D);
+    background: #394539;
 }
 
 .team-rank, .team-name-scoreboard, .team-correct-answer, .team-score {
