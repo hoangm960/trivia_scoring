@@ -47,7 +47,9 @@ function Scoreboard() {
 	return (
 		<div className="scoreboard-container">
 			<img src={logo} alt="Logo" className="logo" />
-			<div className="scoreboard-timer">10</div>
+			{questionStatus === QUESTION_STATUS.IN_PROGRESS ?
+            <div className="scoreboard-timer">{duration}</div> : <></>
+        	}
 			<div className='scoreboard-title-container'>
 				<span className="scoreboard-title">SCOREBOARD</span>
 			</div>

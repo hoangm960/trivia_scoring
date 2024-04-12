@@ -37,12 +37,22 @@
     font-style: normal;
     font-weight: 400;
     line-height: normal;
-
     position: absolute;
-    top: 4rem;
+    top: 2.5rem;
     right: 10rem;
 
+    /* new styles */
+    border: 2px solid #1E541E; 
+    background-color: #DAE4D6;
+    border-radius: 50%; 
+    padding: 1rem; 
+    width: 150px; 
+    height: 150px; 
+    display: flex; 
+    align-items: center;
+    justify-content: center; 
 }
+
 
 .scoreboard-title-container {
     display: flex;
