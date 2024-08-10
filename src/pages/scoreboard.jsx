@@ -14,30 +14,30 @@ function Scoreboard() {
 	const currentQuestionIndex = useQuestionCurrentIndex();
 	const teams = useTeams();
 	const [duration, setDuration] = React.useState(null);
-    const [isLoading, setIsLoading] = React.useState(false);
+	const [isLoading, setIsLoading] = React.useState(false);
 
 
 	useEffect(() => {
-        if (questionStatus === QUESTION_STATUS.NOT_STARTED) {
-            setDuration(0);
-        }
-        if (questionStatus === QUESTION_STATUS.IN_PROGRESS) {
-            setDuration(questions[currentQuestionIndex - 1].duration);
-        }
-    }, [questionStatus, questions, currentQuestionIndex]);
+		if (questionStatus === QUESTION_STATUS.NOT_STARTED) {
+			setDuration(0);
+		}
+		if (questionStatus === QUESTION_STATUS.IN_PROGRESS) {
+			setDuration(questions[currentQuestionIndex - 1].duration);
+		}
+	}, [questionStatus, questions, currentQuestionIndex]);
 
-    useEffect(() => {
-        if (duration === 0) {
-            setDuration(null);
-        }
+	useEffect(() => {
+		if (duration === 0) {
+			setDuration(null);
+		}
 
-        if (!duration) return;
+		if (!duration) return;
 
-        const interval = setInterval(() => {
-            setDuration(duration - 1);
-        }, 1000);
-        return () => clearInterval(interval);
-    }, [duration]);
+		const interval = setInterval(() => {
+			setDuration(duration - 1);
+		}, 1000);
+		return () => clearInterval(interval);
+	}, [duration]);
 
 	useEffect(() => {
 		setIsLoading(questions.length === 0 || teams.length === 0);
@@ -48,13 +48,13 @@ function Scoreboard() {
 		<div className="scoreboard-container">
 			<img src={logo} alt="Logo" className="logo" />
 			{questionStatus === QUESTION_STATUS.IN_PROGRESS ?
-            <div className="scoreboard-timer">{duration}</div> : <></>
-        	}
+				<div className="scoreboard-timer">{duration}</div> : <></>
+			}
 			<div className='scoreboard-title-container'>
 				<span className="scoreboard-title">SCOREBOARD</span>
 			</div>
 			{isLoading ?
-				 <Loading msg="Loading scoreboard..." /> :
+				<Loading msg="Loading scoreboard..." /> :
 				<>
 					<table>
 						<tr className='column-labels'>
