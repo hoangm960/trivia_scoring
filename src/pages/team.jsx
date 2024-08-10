@@ -73,7 +73,7 @@ const TeamPage = () => {
         const betInput = document.getElementById('betInput');
         var betValue = +betInput.value;
 
-        if (currentCredit === 0) {
+        if (currentCredit <= 0) {
             alert("You don't have enough credit to bet. Setting credit to 1.");
             setBetValue(1);
         } else
