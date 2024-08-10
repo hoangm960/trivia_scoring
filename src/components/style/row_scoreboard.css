@@ -1,7 +1,7 @@
 .team-info-text-1 {
-    color: #1E541E;
+    color: black;
     text-align: center;
-    font-family: "Harding Text Web";
+    font-family: "Roboto";
     font-size: 1.5rem;
     font-style: normal;
     font-weight: 500;
@@ -9,9 +9,9 @@
 }
 
 .team-info-text-2 {
-    color: var(--White, #FFF9FE);
+    color: white;
     text-align: center;
-    font-family: "Harding Text Web";
+    font-family: "Roboto";
     font-size: 1.5rem;
     font-style: normal;
     font-weight: 500;
@@ -20,26 +20,26 @@
 
 .team-rank  {
     border-radius: 3.75rem;
-    border: 3px solid var(--Dark-Green, #70785D);
-    background: rgba(227, 245, 226, 0.80);
+    border: 3px solid black;
+    background: #E8C548;
 }
 
 .team-name-scoreboard  {
     border-radius: 1.25rem;
-    border: 3px solid var(--Dark-Green, #70785D);
-    background: rgba(11, 9, 18, 0.62);
+    border: 3px solid black;
+    background: #E8C548;
 }
 
 .team-correct-answer {
     border-radius: 1.25rem;
-    border: 3px solid var(--Dark-Green, #70785D);
-    background: #E3F5E2;
+    border: 3px solid black;
+    background: #E8C548;
 }
 
 .team-score  {
     border-radius: 1.25rem;
-    border: 3px solid var(--Dark-Green, #70785D);
-    background: #394539;
+    border: 3px solid black;
+    background: #E8C548;
 }
 
 .team-rank, .team-name-scoreboard, .team-correct-answer, .team-score {
