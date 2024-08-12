@@ -2,7 +2,7 @@
     display: flex;
     width: 100vw;
     height: 100vh;
-    padding: 10vh 3vw;
+    padding: 8vh 3vw;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
@@ -21,10 +21,10 @@
 .logo {
     display: flex;
     position: absolute;
-    top: 12.5rem;
-    left: 47rem;
+    top: 4rem;
+    right: 8rem;
     width: 100%;
-    max-width: 10rem;
+    max-width: 80px;
     min-width: 70px;
     border-radius: 4rem;
 }
@@ -33,21 +33,21 @@
     color: black;
     text-align: center;
     font-family: "Roboto";
-    font-size: 16rem;
+    font-size: 4rem;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
     position: absolute;
-    top: 4rem;
-    right: 50rem;
+    top: 3.7rem;
+    right: 18rem;
 
     /* new styles */
     border: 2px solid #00196E   ; 
     background-color: #CEEDF6;
     border-radius: 50%; 
     padding: 1rem; 
-    width: 22rem; 
-    height: 22rem; 
+    width: 5.5rem; 
+    height: 5.5rem; 
     display: flex; 
     align-items: center;
     justify-content: center; 
@@ -56,34 +56,55 @@
 
 .scoreboard-title-container {
     display: flex;
-    padding: 2rem 2rem;
+    padding: 2.1875rem 2rem;
     justify-content: center;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.625rem;
     border-radius: 1.75rem;
     /* box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25); */
 }
 
 .scoreboard-title {
     display: flex;
+    width: 20rem;
+    height: 1rem;
     flex-direction: column;
     justify-content: center;
 
     color: black;
     text-align: center;
     font-family: "Roboto";
+    font-size: 3rem;
     font-style: normal;
     font-weight: 500;
-    font-size: 8rem;
+    line-height: normal;
 }
 
-.label-rank, .label-correct-answer, .label-score, .label-name-scoreboard {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
+
+.label-rank {
     margin-bottom: 1rem;
-    border-radius: 3rem;
+    border-radius: 1.25rem;
+    border: 5px solid #00196E;
+    background: #00196E;
+}
+
+.label-name-scoreboard {
+    margin-bottom: 1rem;
+    border-radius: 1.25rem;
+    border: 5px solid #00196E;
+    background: #00196E;
+}
+
+.label-correct-answer {
+    margin-bottom: 1rem;
+    border-radius: 1.25rem;
+    border: 5px solid #00196E;
+    background: #00196E;
+}
+
+.label-score {
+    margin-bottom: 1rem;
+    border-radius: 1.25rem;
     border: 5px solid #00196E;
     background: #00196E;
 }
