@@ -2,7 +2,7 @@
     color: black;
     text-align: center;
     font-family: "Roboto";
-    font-size: 3rem;
+    font-size: 1.5rem;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
@@ -12,19 +12,39 @@
     color: white;
     text-align: center;
     font-family: "Roboto";
-    font-size: 3rem;
+    font-size: 1.5rem;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
 }
 
-.team-rank, .team-name-scoreboard, .team-correct-answer, .team-score {
-    border-radius: 3rem;
+.team-rank  {
+    border-radius: 3.75rem;
     border: 3px solid black;
     background: #E8C548;
+}
+
+.team-name-scoreboard  {
+    border-radius: 1.25rem;
+    border: 3px solid black;
+    background: #E8C548;
+}
+
+.team-correct-answer {
+    border-radius: 1.25rem;
+    border: 3px solid black;
+    background: #E8C548;
+}
+
+.team-score  {
+    border-radius: 1.25rem;
+    border: 3px solid black;
+    background: #E8C548;
+}
+
+.team-rank, .team-name-scoreboard, .team-correct-answer, .team-score {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 5rem;
-    margin: 1rem;
+    height: 2rem;
 }
