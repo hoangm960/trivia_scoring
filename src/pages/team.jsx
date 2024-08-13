@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import './style/team.css';
 import { Button } from '../components/button';
 import CheckIcon from '../assets/check.png';
@@ -34,6 +34,52 @@ const TeamPage = () => {
         setIsLoading(questions.length === 0 || teamName === "Team Name");
     }, [questions, teamName]);
 
+    const handleSubmit = useCallback(async () => {
+        const checkedAnswer = document.querySelector('input[name=choices]:checked');
+        const checkedValue = checkedAnswer ? document.querySelector('label[for=' + checkedAnswer.id + ']').textContent : "";
+
+        // fetch("https://trivia-backend-avcm.onrender.com/api/answerQuestion", {
+        //     method: "POST",
+        //     body: JSON.stringify({
+        //         answer: checkedValue,
+        //         teamId: teamID,
+        //         bet: betValue
+        //     }),
+        //     headers: {
+        //         "Content-type": "application/json"
+        //     }
+        // });
+
+        const currentQuestion = questions[currentQuestionIndex - 1];
+        const isCorrect = currentQuestion.answer === checkedValue;
+        const historyCollectionRef = collection(db, 'history');
+        const historyRef = doc(historyCollectionRef, teamID);
+        const historySnapshot = await getDoc(historyRef)
+        const historyData = historySnapshot.data()
+
+        const newHistory = {
+            ...historyData.history, [currentQuestion.questionID]: {
+                bet: betValue,
+                answer: isCorrect,
+                status: 'answered'
+            }
+        }
+        await updateDoc(historyRef, {
+            history: newHistory,
+        })
+
+        if (currentQuestionIndex === questions.length) {
+            history.push("/game_over");
+        }
+        else {
+            if (checkedAnswer)
+                checkedAnswer.checked = false;
+            setIsWaiting(true);
+            setBetValue(0);
+            setDuration(0);
+        }
+    }, [questions, currentQuestionIndex, teamID, betValue, history]);
+
     useEffect(() => {
         if (questionStatus === QUESTION_STATUS.NOT_STARTED) {
             setIsWaiting(false);
@@ -46,8 +92,10 @@ const TeamPage = () => {
             if (isOverTime)
                 setTimeout(() => {
                     setIsOverTime(false);
+                    handleSubmit();
                 }, 3000);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [questionStatus, questions, currentQuestionIndex, isOverTime]);
 
     useEffect(() => {
@@ -87,51 +135,6 @@ const TeamPage = () => {
                     setBetValue(currentCredit);
                 } else
                     setBetValue(parseInt(betValue));
-    }
-
-    const handleSubmit = async () => {
-        const checkedAnswer = document.querySelector('input[name=choices]:checked');
-        const checkedValue = document.querySelector('label[for=' + checkedAnswer.id + ']').textContent;
-
-        // fetch("https://trivia-backend-avcm.onrender.com/api/answerQuestion", {
-        //     method: "POST",
-        //     body: JSON.stringify({
-        //         answer: checkedValue,
-        //         teamId: teamID,
-        //         bet: betValue
-        //     }),
-        //     headers: {
-        //         "Content-type": "application/json"
-        //     }
-        // });
-
-        const currentQuestion = questions[currentQuestionIndex - 1];
-        const isCorrect = currentQuestion.answer === checkedValue;
-        const historyCollectionRef = collection(db, 'history');
-        const historyRef = doc(historyCollectionRef, teamID);
-        const historySnapshot = await getDoc(historyRef)
-        const historyData = historySnapshot.data()
-
-        const newHistory = {
-            ...historyData.history, [currentQuestion.questionID]: {
-                bet: betValue,
-                answer: isCorrect,
-                status: 'answered'
-            }
-        }
-        await updateDoc(historyRef, {
-            history: newHistory,
-        })
-
-        if (currentQuestionIndex === questions.length) {
-            history.push("/game_over");
-        }
-        else {
-            checkedAnswer.checked = false;
-            setIsWaiting(true);
-            setBetValue(0);
-            setDuration(0);
-        }
     }
 
     return (
@@ -191,14 +194,6 @@ const TeamPage = () => {
                                             <Answer id={"choiceC"} text={"C"} />
                                             <Answer id={"choiceD"} text={"D"} />
                                         </div>
-                                    </div>
-                                    <div className="submit-button-container">
-                                        <Button
-                                            text="Submit"
-                                            icon={CheckIcon}
-                                            inputType="submit"
-                                            onClick={handleSubmit}
-                                        />
                                     </div>
                                 </div>
                             </>
