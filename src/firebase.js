@@ -4,15 +4,15 @@ import { getFirestore } from "firebase/firestore";
 // https://firebase.google.com/docs/web/setup#available-libraries
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyCwt_Gz7B5LA8QmcEIg9K_eFRFpduIfMqA",
-    authDomain: "trivia-scoring.firebaseapp.com",
-    databaseURL: "https://trivia-scoring-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "trivia-scoring",
-    storageBucket: "trivia-scoring.appspot.com",
-    messagingSenderId: "526557471327",
-    appId: "1:526557471327:web:d15409f218b6fe6b44b1ea",
-    measurementId: "G-N32MKHC2YB"
+    apiKey: "AIzaSyDcANm55E4Z97-vKCeUKTwxVtQuhGZYTZI",
+    authDomain: "asean-scoring.firebaseapp.com",
+    databaseURL: "https://asean-scoring-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "asean-scoring",
+    storageBucket: "asean-scoring.appspot.com",
+    messagingSenderId: "880072281043",
+    appId: "1:880072281043:web:72241ca9bceb7dc49cfd26"
 };
+
 // Initialize Firebase
 
 const app = initializeApp(firebaseConfig);
