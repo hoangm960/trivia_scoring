@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import './style/team.css';
 import { Button } from '../components/button';
 import CheckIcon from '../assets/check.png';
@@ -14,27 +14,25 @@ import useQuestionStatus from '../hooks/useQuestionStatus';
 import useQuestionCurrentIndex from '../hooks/useQuestionCurrentIndex';
 import useTeamCurrentCredit from '../hooks/useTeamCurrentCredit';
 import { QUESTION_STATUS } from '../constants/questionConst';
-import useTeamName from '../hooks/useTeamName';
 
 const TeamPage = () => {
     const history = useHistory();
     const [isLoading, setIsLoading] = React.useState(false);
     const [isWaiting, setIsWaiting] = React.useState(false);
-    const teamName = useTeamName();
+    const teamName = localStorage.getItem("team");
     const questionStatus = useQuestionStatus();
     const questions = useQuestions();
     const currentCredit = useTeamCurrentCredit();
     const currentQuestionIndex = useQuestionCurrentIndex();
     const [duration, setDuration] = React.useState(null);
     const [betValue, setBetValue] = React.useState(0);
-    const [isOverTime, setIsOverTime] = React.useState(false);
     const teamID = localStorage.getItem("team");
 
     useEffect(() => {
         setIsLoading(questions.length === 0 || teamName === "Team Name");
     }, [questions, teamName]);
 
-    const handleSubmit = useCallback(async () => {
+    const handleSubmit = async () => {
         const checkedAnswer = document.querySelector('input[name=choices]:checked');
         const checkedValue = checkedAnswer ? document.querySelector('label[for=' + checkedAnswer.id + ']').textContent : "";
 
@@ -78,30 +76,24 @@ const TeamPage = () => {
             setBetValue(0);
             setDuration(0);
         }
-    }, [questions, currentQuestionIndex, teamID, betValue, history]);
+    }
 
     useEffect(() => {
         if (questionStatus === QUESTION_STATUS.NOT_STARTED) {
             setIsWaiting(false);
             setBetValue(0);
             setDuration(null);
-        } else if (questionStatus === QUESTION_STATUS.IN_PROGRESS && !isOverTime) {
+        } else if (questionStatus === QUESTION_STATUS.IN_PROGRESS) {
             setDuration(questions[currentQuestionIndex - 1].duration);
         } else if (questionStatus === QUESTION_STATUS.FINISHED) {
-            // add 3 seconds buffer for user to input answer
-            if (isOverTime)
-                setTimeout(() => {
-                    setIsOverTime(false);
-                    handleSubmit();
-                }, 3000);
+            handleSubmit();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [questionStatus, questions, currentQuestionIndex, isOverTime]);
+    }, [questionStatus]);
 
     useEffect(() => {
         if (duration === 0) {
             setDuration(null);
-            setIsOverTime(true);
         }
 
         if (!duration) return;
@@ -172,7 +164,7 @@ const TeamPage = () => {
                                 onClick={handleBet}
                             />
                         </div> :
-                        (questionStatus !== QUESTION_STATUS.IN_PROGRESS && !isOverTime) ?
+                        (questionStatus !== QUESTION_STATUS.IN_PROGRESS) ?
                             <Loading msg="Waiting for host to start the question..." /> :
                             <>
                                 <div className="team-info">
