@@ -27,9 +27,7 @@ const TeamPage = () => {
     const currentQuestionIndex = useQuestionCurrentIndex();
     const [duration, setDuration] = React.useState(null);
     const [betValue, setBetValue] = React.useState(0);
-    const [isOverTime, setIsOverTime] = React.useState(false);
     const [isReInitialize, setIsReInitialize] = React.useState(false);
-    const [bettingDuration, setBettingDuration] = React.useState(0);
     const teamID = localStorage.getItem("team");
 
     useEffect(() => {
@@ -41,76 +39,6 @@ const TeamPage = () => {
     useEffect(() => {
         setIsLoading((questionLoading || teamLoading) && isReInitialize);
     }, [questionLoading, teamLoading, isReInitialize]);
-
-    useEffect(() => {
-        if (questionStatus === QUESTION_STATUS.NOT_STARTED) {
-            setIsWaiting(false);
-            setBetValue(0);
-            setDuration(null);
-            if (isReInitialize)
-                setBettingDuration(10);
-        } else if (questionStatus === QUESTION_STATUS.IN_PROGRESS && !isOverTime) {
-            setDuration(questions[currentQuestionIndex - 1].duration);
-        } else if (questionStatus === QUESTION_STATUS.FINISHED) {
-            // add 3 seconds buffer for user to input answer
-            if (isOverTime)
-                setTimeout(() => {
-                    setIsOverTime(false);
-                }, 3000);
-        }
-    }, [questionStatus, questions, currentQuestionIndex, isOverTime, isReInitialize]);
-
-    useEffect(() => {
-        if (duration === 0) {
-            setDuration(null);
-            setIsOverTime(true);
-        }
-
-        if (!duration) return;
-
-        const interval = setInterval(() => {
-            setDuration(duration - 1);
-        }, 1000);
-        return () => clearInterval(interval);
-    }, [duration]);
-
-    useEffect(() => {
-        if (bettingDuration === 0) {
-            setBettingDuration(null);
-        }
-
-        if (!bettingDuration) return;
-
-        const interval = setInterval(() => {
-            setBettingDuration(bettingDuration - 1);
-        }, 1000);
-        return () => clearInterval(interval);
-    }, [bettingDuration]);
-
-    const handleBet = async () => {
-        const betInput = document.getElementById('betInput');
-        var betValue = +betInput.value;
-
-        if (currentCredit === 0) {
-            alert("You don't have enough credit to bet. Setting credit to 1.");
-            setBetValue(1);
-        } else
-            // if bet is more than half of current credit or more than current credit
-            if ((betValue > (currentCredit + 1) / 2) && currentQuestionIndex <= 10) {
-                alert("For the first 10 questions, you can only bet half of your credit. Setting bet to half of your credit.");
-                setBetValue(Math.floor((currentCredit + 1) / 2));
-            } else
-                if (currentQuestionIndex > 10 && betValue > currentCredit) {
-                    alert("You can only bet your current credit. Setting bet to your current credit.");
-                    setBetValue(currentCredit);
-                } else
-                    setBetValue(parseInt(betValue));
-    }
-
-    const handleLogOut = async () => {
-        localStorage.removeItem("team");
-        history.push('/');
-    }
 
     const handleSubmit = async () => {
         const checkedAnswer = document.querySelector('input[name=choices]:checked');
@@ -150,11 +78,62 @@ const TeamPage = () => {
             history.push("/game_over");
         }
         else {
-            checkedAnswer.checked = false;
+            if (checkedAnswer)
+                checkedAnswer.checked = false;
             setIsWaiting(true);
             setBetValue(0);
-            setDuration(0);
         }
+    }
+
+    useEffect(() => {
+        if (questionStatus === QUESTION_STATUS.NOT_STARTED) {
+            setIsWaiting(false);
+            setBetValue(0);
+            setDuration(null);
+        } else if (questionStatus === QUESTION_STATUS.IN_PROGRESS) {
+            setDuration(questions[currentQuestionIndex - 1].duration);
+        } else if (questionStatus === QUESTION_STATUS.FINISHED) {
+            handleSubmit();
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [questionStatus]);
+
+    useEffect(() => {
+        if (duration === 0) {
+            setDuration(null);
+        }
+
+        if (!duration) return;
+
+        const interval = setInterval(() => {
+            setDuration(duration - 1);
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [duration]);
+
+    const handleBet = async () => {
+        const betInput = document.getElementById('betInput');
+        var betValue = +betInput.value;
+
+        if (currentCredit === 0) {
+            alert("You don't have enough credit to bet. Setting credit to 1.");
+            setBetValue(1);
+        } else
+            // if bet is more than half of current credit or more than current credit
+            if ((betValue > (currentCredit + 1) / 2) && currentQuestionIndex <= 10) {
+                alert("For the first 10 questions, you can only bet half of your credit. Setting bet to half of your credit.");
+                setBetValue(Math.floor((currentCredit + 1) / 2));
+            } else
+                if (currentQuestionIndex > 10 && betValue > currentCredit) {
+                    alert("You can only bet your current credit. Setting bet to your current credit.");
+                    setBetValue(currentCredit);
+                } else
+                    setBetValue(parseInt(betValue));
+    }
+
+    const handleLogOut = async () => {
+        localStorage.removeItem("team");
+        history.push('/');
     }
 
     return (
@@ -174,13 +153,12 @@ const TeamPage = () => {
                     <Loading msg="Loading..." /> :
                     (isWaiting) ?
                         <Loading msg="Wait for the next question..." /> :
-                        (questionStatus === QUESTION_STATUS.NOT_STARTED && betValue === 0 && bettingDuration !== null) ?
+                        (questionStatus === QUESTION_STATUS.NOT_STARTED && betValue === 0) ?
                             <div className="submit-button-container">
                                 <div className="question-counter-container">
                                     <div className="question">Question:</div>
                                     <div className="question-number">{currentQuestionIndex}/{questions.length}</div>
                                 </div>
-                                <div className="timer">{bettingDuration}</div>
                                 <div className="team-info-container">
                                     <div className="info-container">
                                         <div className="team-label">Team:</div>
@@ -204,7 +182,7 @@ const TeamPage = () => {
                                     onClick={handleBet}
                                 />
                             </div> :
-                            (questionStatus !== QUESTION_STATUS.IN_PROGRESS && !isOverTime) ?
+                            (questionStatus !== QUESTION_STATUS.IN_PROGRESS) ?
                                 <Loading msg="Waiting for host to start the question..." /> :
                                 <>
                                     <div className="team-info">
@@ -226,14 +204,6 @@ const TeamPage = () => {
                                                 <Answer id={"choiceC"} text={"C"} />
                                                 <Answer id={"choiceD"} text={"D"} />
                                             </div>
-                                        </div>
-                                        <div className="submit-button-container">
-                                            <Button
-                                                text="Submit"
-                                                icon={CheckIcon}
-                                                inputType="submit"
-                                                onClick={handleSubmit}
-                                            />
                                         </div>
                                     </div>
                                 </>
