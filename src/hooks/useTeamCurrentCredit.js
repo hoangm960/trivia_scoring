@@ -10,15 +10,17 @@ export default function useTeamCurrentCredit() {
         const historyCollectionRef = collection(db, 'history');
         const historyRef = doc(historyCollectionRef, teamID);
         onSnapshot(historyRef, (doc) => {
-            if (doc.exists()) {
-                setTeamCurrentCredit(doc.data().credit);
+            if (!doc.exists()) {
+                setTeamCurrentCredit(0);
+                return;
             }
+            setTeamCurrentCredit(doc.data().credit);
         });
     }
 
     useEffect(() => {
         getCredit();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return teamCurrentCredit;

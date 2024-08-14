@@ -3,18 +3,28 @@ import { useState, useEffect } from 'react';
 import { db } from '../firebase';
 
 export default function useTeamName() {
-    const [teamName, setTeamName] = useState("Team Name");
+    const [teamName, setTeamName] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const getTeamName = async () => {
-        const teamID = localStorage.getItem("team");
-        const teamRef = doc(db, "history", teamID);
-        const teamSnap = await getDoc(teamRef);
-        setTeamName(teamSnap.data().name);
+        try {
+            setLoading(true);
+            const teamID = localStorage.getItem("team");
+            const teamRef = doc(db, "history", teamID);
+            const teamSnap = await getDoc(teamRef);
+            if (teamSnap.exists()) {
+                setTeamName(teamSnap.data().name);
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
     }
 
     useEffect(() => {
         getTeamName();
     }, []);
 
-    return teamName;
+    return [teamName, loading];
 }

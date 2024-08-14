@@ -8,7 +8,7 @@ export const Answer = ({
 
     return (
         <>
-            <input type="radio" id={id} name="choices"/>
+            <input type="radio" id={id} name="choices" value="A"/>
             <label htmlFor={id} className="answer">{text}</label>
         </>
     );
