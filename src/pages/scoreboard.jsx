@@ -9,7 +9,7 @@ import useTeams from '../hooks/useTeams';
 import { QUESTION_STATUS } from '../constants/questionConst';
 
 function Scoreboard() {
-	const questions = useQuestions();
+	const [questions, questionLoading] = useQuestions();
 	const questionStatus = useQuestionStatus();
 	const currentQuestionIndex = useQuestionCurrentIndex();
 	const teams = useTeams();
@@ -40,8 +40,9 @@ function Scoreboard() {
 	}, [duration]);
 
 	useEffect(() => {
-		setIsLoading(questions.length === 0 || teams.length === 0);
-	}, [questions, teams]);
+		setIsLoading(questionLoading || teams.length === 0);
+	}, [questionLoading, teams]);
+
 
 
 	return (
