@@ -35,6 +35,7 @@ const TeamPage = () => {
   const [betValue, setBetValue] = React.useState(0);
   const [isOverTime, setIsOverTime] = React.useState(false);
   const [isReInitialize, setIsReInitialize] = React.useState(false);
+  const [answer, setAnswer] = React.useState("");
   const teamID = localStorage.getItem("team");
 
   useEffect(() => {
@@ -114,17 +115,17 @@ const TeamPage = () => {
     history.push("/");
   };
 
-  const handleSubmit = async () => {
+  const updateAnswer = () => {
     const checkedAnswer = document.querySelector("input[name=choices]:checked");
-    const checkedValue = checkedAnswer
-      ? document.querySelector("label[for=" + checkedAnswer.id + "]")
-          .textContent
-      : "";
+    const checkedValue = checkedAnswer ? checkedAnswer.value : "";
+    setAnswer(checkedValue);
+  };
 
+  const handleSubmit = async () => {
     fetch("https://trivia-scoring-backend.onrender.com/api/answerQuestion", {
       method: "POST",
       body: JSON.stringify({
-        answer: checkedValue,
+        answer: answer,
         teamId: teamID,
         bet: betValue,
       }),
@@ -137,7 +138,7 @@ const TeamPage = () => {
     if (currentQuestionIndex === questions.length) {
       history.push("/game_over");
     } else {
-      if (checkedAnswer) checkedAnswer.checked = false;
+      // if (checkedAnswer) checkedAnswer.checked = false;
       setIsWaiting(true);
       setBetValue(0);
       setDuration(0);
@@ -210,14 +211,14 @@ const TeamPage = () => {
             <div className="question-text">
               What answer did the team choose?
             </div>
-            <div className="answers">
+            <div className="answers" onClick={updateAnswer}>
               <div className="answer-row">
-                <Answer id={"choiceA"} text={"A"} />
-                <Answer id={"choiceB"} text={"B"} />
+                <Answer id={"choiceA"} value={"A"} />
+                <Answer id={"choiceB"} value={"B"} />
               </div>
               <div className="answer-row">
-                <Answer id={"choiceC"} text={"C"} />
-                <Answer id={"choiceD"} text={"D"} />
+                <Answer id={"choiceC"} value={"C"} />
+                <Answer id={"choiceD"} value={"D"} />
               </div>
             </div>
             <div className="submit-button-container">
