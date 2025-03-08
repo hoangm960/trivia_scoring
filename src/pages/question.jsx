@@ -8,19 +8,19 @@ function QuestionPage({
 	bet,
 	teamId,
 	currentQuestion,
-	questionDuration,
+	currentDuration,
 	teamName,
 	numQuestions,
 }) {
 	// currentQuestion: the current question index (assumed 1-based)
 	const [selectedAnswer, setSelectedAnswer] = useState("");
-	const [timeLeft, setTimeLeft] = useState(questionDuration);
+	const [timeLeft, setTimeLeft] = useState(currentDuration);
 	const [submitted, setSubmitted] = useState(false);
 
 	// When the questionDuration prop changes (new question), reset the timer.
 	useEffect(() => {
-		setTimeLeft(questionDuration);
-	}, [questionDuration]);
+		setTimeLeft(currentDuration);
+	}, [currentDuration]);
 
 	// Countdown timer logic.
 	useEffect(() => {
