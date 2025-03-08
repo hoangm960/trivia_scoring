@@ -9,6 +9,7 @@ import {
 import BettingPage from "./betting";
 import QuestionPage from "./question";
 import { API_BASE } from "../constants/api";
+import Loading from "../components/loading";
 
 function Game() {
 	const [gameStatus, setGameStatus] = useState("pending"); // e.g. "pending" or "started"
@@ -54,20 +55,28 @@ function Game() {
 	const handleBetSubmit = betValue => {
 		setBet(betValue);
 		setBetSubmitted(true);
-		// Optionally send the bet to your backend here.
 		history.push(`${url}/question`);
 	};
 
+	if (questionDurations == 0) {
+		return (
+			<div className="team-container">
+				<Loading msg="Loading..." />
+			</div>
+		);
+	}
+
 	return (
-		<div>
+		<div className="team-container">
 			<Switch>
 				<Route path={`${path}/betting`}>
 					<BettingPage
 						onBetSubmit={handleBetSubmit}
 						betSubmitted={betSubmitted}
-						initialBet={bet}
 						currentQuestion={currentQuestion}
-						teamCredit={teamCredit}
+						currentCredit={teamCredit}
+						numQuestions={questionDurations.length}
+						teamName="meng"
 					/>
 				</Route>
 				<Route path={`${path}/question`}>
