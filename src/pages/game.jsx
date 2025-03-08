@@ -10,6 +10,7 @@ import BettingPage from "./betting";
 import QuestionPage from "./question";
 import { API_BASE } from "../constants/api";
 import Loading from "../components/loading";
+import "./style/team.css";
 
 function Game() {
 	const [gameStatus, setGameStatus] = useState("pending"); // e.g. "pending" or "started"
@@ -17,6 +18,7 @@ function Game() {
 	const [bet, setBet] = useState(null);
 	const [betSubmitted, setBetSubmitted] = useState(false);
 	const [teamCredit, setTeamCredit] = useState(30); // initial team credit; adjust as needed
+	const [questionDurations, setQuestionDurations] = useState([]);
 
 	// Get teamId from localStorage.
 	const teamId = localStorage.getItem("team");
@@ -52,10 +54,24 @@ function Game() {
 		return () => clearInterval(intervalId);
 	}, [history, url]);
 
+	useEffect(() => {
+		fetch(`${API_BASE}/api/allQuestionDurations`)
+			.then(res => res.json())
+			.then(data => {
+				setQuestionDurations(data.durations);
+			})
+			.catch(err =>
+				console.error("Error fetching question durations:", err)
+			);
+	}, []);
+
+	const currentDuration =
+		questionDurations.find(item => item.index === currentQuestion)
+			?.duration || 30;
+
 	const handleBetSubmit = betValue => {
 		setBet(betValue);
 		setBetSubmitted(true);
-		history.push(`${url}/question`);
 	};
 
 	if (questionDurations == 0) {
@@ -84,6 +100,8 @@ function Game() {
 						bet={bet}
 						teamId={teamId}
 						currentQuestion={currentQuestion}
+						currentDuration={currentDuration}
+						numQuestions={questionDurations.length}
 					/>
 				</Route>
 				<Route exact path={path}>
