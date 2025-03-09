@@ -52,7 +52,7 @@ function Game() {
 				.catch(err =>
 					console.error("Error fetching current question:", err)
 				);
-		}, 500);
+		}, 2000);
 
 		return () => clearInterval(intervalId);
 	}, [gameStatus, teamId]);
