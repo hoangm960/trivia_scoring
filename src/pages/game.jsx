@@ -4,6 +4,9 @@ import QuestionPage from "./question";
 import { API_BASE } from "../constants/api";
 import Loading from "../components/loading";
 import "./style/team.css";
+import { Button } from "../components/button";
+import { useHistory } from "react-router-dom";
+import LogOutIcon from "../assets/logout.png";
 
 function Game() {
 	const [gameStatus, setGameStatus] = useState();
@@ -13,6 +16,7 @@ function Game() {
 	const [isInitialized, setIsInitialized] = useState(false);
 
 	const teamId = localStorage.getItem("team");
+	const history = useHistory();
 	const [teamInfo, setTeamInfo] = useState({});
 
 	// Poll backend every 2 seconds for game status and current question.
@@ -72,10 +76,22 @@ function Game() {
 		questionDurations.find(item => item.index === currentQuestion)
 			?.duration || 30;
 
+	const handleLogOut = async () => {
+		localStorage.removeItem("team");
+		history.push("/");
+	};
+
 	if (!isInitialized) {
 		return (
 			<div className="team-container">
 				<Loading msg="Waiting for host to initialize the game..." />
+				<Button
+					id="logout"
+					type="destructive"
+					icon={LogOutIcon}
+					text="Logout"
+					onClick={handleLogOut}
+				/>
 			</div>
 		);
 	}

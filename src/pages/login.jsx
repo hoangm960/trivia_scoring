@@ -21,7 +21,7 @@ const LoginPage = () => {
 			.toLowerCase()
 			.replaceAll(" ", "_");
 
-		const rawResponse = await fetch(`${API_BASE}/api/addUser`, {
+		const rawResponse = await fetch(`${API_BASE}/api/login`, {
 			method: "POST",
 			headers: {
 				Accept: "application/json",
