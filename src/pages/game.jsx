@@ -1,11 +1,4 @@
 import React, { useState, useEffect } from "react";
-import {
-	Switch,
-	Route,
-	useRouteMatch,
-	useHistory,
-	Redirect,
-} from "react-router-dom";
 import BettingPage from "./betting";
 import QuestionPage from "./question";
 import { API_BASE } from "../constants/api";
@@ -13,18 +6,15 @@ import Loading from "../components/loading";
 import "./style/team.css";
 
 function Game() {
-	const [gameStatus, setGameStatus] = useState("pending"); // e.g. "pending" or "started"
+	const [gameStatus, setGameStatus] = useState();
 	const [currentQuestion, setCurrentQuestion] = useState(1);
 	const [bet, setBet] = useState(null);
 	const [betSubmitted, setBetSubmitted] = useState(false);
-	const [teamCredit, setTeamCredit] = useState(30); // initial team credit; adjust as needed
 	const [questionDurations, setQuestionDurations] = useState([]);
+	const [isInitialized, setIsInitialized] = useState(false);
 
-	// Get teamId from localStorage.
 	const teamId = localStorage.getItem("team");
-
-	const { path, url } = useRouteMatch();
-	const history = useHistory();
+	const [teamInfo, setTeamInfo] = useState({});
 
 	// Poll backend every 2 seconds for game status and current question.
 	useEffect(() => {
@@ -33,15 +23,29 @@ function Game() {
 				.then(res => res.json())
 				.then(data => {
 					setGameStatus(data.status);
-					if (data.status === "started") {
-						history.push(`${url}/question`);
-					} else {
-						history.push(`${url}/betting`);
-					}
 				})
 				.catch(err =>
 					console.error("Error fetching game status:", err)
 				);
+
+			fetch(`${API_BASE}/api/teamInfo`, {
+				method: "POST",
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ teamID: teamId }),
+			})
+				.then(res => {
+					if (res.status === 400) return;
+					return res.json();
+				})
+				.then(data => {
+					if (!data) return;
+					setTeamInfo({ ...data });
+					setIsInitialized(true);
+				})
+				.catch(err => console.error("Error fetching team info:", err));
 
 			fetch(`${API_BASE}/api/currentQuestion`)
 				.then(res => res.json())
@@ -49,10 +53,10 @@ function Game() {
 				.catch(err =>
 					console.error("Error fetching current question:", err)
 				);
-		}, 2000);
+		}, 500);
 
 		return () => clearInterval(intervalId);
-	}, [history, url]);
+	}, [gameStatus]);
 
 	useEffect(() => {
 		fetch(`${API_BASE}/api/allQuestionDurations`)
@@ -74,7 +78,19 @@ function Game() {
 		setBetSubmitted(true);
 	};
 
-	if (questionDurations == 0) {
+	useEffect(() => {
+		if (gameStatus === "ended") setBetSubmitted(false);
+	}, [gameStatus]);
+
+	if (!isInitialized) {
+		return (
+			<div className="team-container">
+				<Loading msg="Waiting for host to initialize the game..." />
+			</div>
+		);
+	}
+
+	if (questionDurations == 0 || !gameStatus) {
 		return (
 			<div className="team-container">
 				<Loading msg="Loading..." />
@@ -82,32 +98,61 @@ function Game() {
 		);
 	}
 
+	if (gameStatus === "ended") {
+		return (
+			<div className="team-container">
+				<Loading msg="Waiting for host to tally up the score..." />
+			</div>
+		);
+	}
+
+	if (gameStatus === "summarized") {
+		return (
+			<div className="team-container">
+				<Loading msg="Waiting for next question..." />
+			</div>
+		);
+	}
+
+	if (gameStatus === "pending" && betSubmitted) {
+		return (
+			<div className="team-container">
+				<Loading msg="Waiting for host to start the question..." />
+			</div>
+		);
+	}
+
+	if (gameStatus === "pending" && !betSubmitted) {
+		return (
+			<div className="team-container">
+				<BettingPage
+					onBetSubmit={handleBetSubmit}
+					betSubmitted={betSubmitted}
+					currentQuestion={currentQuestion}
+					numQuestions={questionDurations.length}
+					teamInfo={teamInfo}
+				/>
+			</div>
+		);
+	}
+
+	if (gameStatus === "started" && betSubmitted) {
+		return (
+			<div className="team-container">
+				<QuestionPage
+					bet={bet}
+					teamId={teamId}
+					currentQuestion={currentQuestion}
+					currentDuration={currentDuration}
+					numQuestions={questionDurations.length}
+				/>
+			</div>
+		);
+	}
+
 	return (
 		<div className="team-container">
-			<Switch>
-				<Route path={`${path}/betting`}>
-					<BettingPage
-						onBetSubmit={handleBetSubmit}
-						betSubmitted={betSubmitted}
-						currentQuestion={currentQuestion}
-						currentCredit={teamCredit}
-						numQuestions={questionDurations.length}
-						teamName="meng"
-					/>
-				</Route>
-				<Route path={`${path}/question`}>
-					<QuestionPage
-						bet={bet}
-						teamId={teamId}
-						currentQuestion={currentQuestion}
-						currentDuration={currentDuration}
-						numQuestions={questionDurations.length}
-					/>
-				</Route>
-				<Route exact path={path}>
-					<Redirect to={`${url}/betting`} />
-				</Route>
-			</Switch>
+			<Loading msg="Loading..." />
 		</div>
 	);
 }

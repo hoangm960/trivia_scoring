@@ -15,7 +15,6 @@ function QuestionPage({
 	// currentQuestion: the current question index (assumed 1-based)
 	const [selectedAnswer, setSelectedAnswer] = useState("");
 	const [timeLeft, setTimeLeft] = useState(currentDuration);
-	const [submitted, setSubmitted] = useState(false);
 
 	// When the questionDuration prop changes (new question), reset the timer.
 	useEffect(() => {
@@ -55,7 +54,6 @@ function QuestionPage({
 			});
 			const data = await response.json();
 			console.log("Answer submitted:", data);
-			setSubmitted(true);
 		} catch (error) {
 			console.error("Error submitting answer", error);
 		}

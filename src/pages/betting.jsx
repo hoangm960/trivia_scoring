@@ -9,14 +9,14 @@ const BettingPage = ({
 	betSubmitted,
 	currentQuestion,
 	numQuestions,
-	teamName,
-	currentCredit,
+	teamInfo,
 }) => {
 	const [bet, setBet] = useState("");
 
 	const handleBet = e => {
 		e.preventDefault();
 		const betValue = parseInt(bet, 10);
+		const currentCredit = teamInfo.credit;
 		if (isNaN(betValue) || betValue <= 0) {
 			alert("Please enter a positive number for your bet.");
 			return;
@@ -57,11 +57,11 @@ const BettingPage = ({
 			<div className="team-info-container">
 				<div className="info-container">
 					<div className="team-label">Team:</div>
-					<div className="team-name">{teamName}</div>
+					<div className="team-name">{teamInfo.name}</div>
 				</div>
 				<div className="info-container">
 					<div className="team-label">Credits:</div>
-					<div className="team-value">{currentCredit}</div>
+					<div className="team-value">{teamInfo.credit}</div>
 				</div>
 			</div>
 			<InputBox
