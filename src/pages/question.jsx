@@ -29,13 +29,19 @@ function QuestionPage({
 		return () => clearInterval(timerId);
 	}, [timeLeft]);
 
+	useEffect(() => {
+		if (timeLeft <= 0 && !submitted) {
+			handleSubmit(null, true);
+		}
+	});
+
 	const updateAnswer = value => {
 		setSelectedAnswer(value);
 	};
 
-	const handleSubmit = async e => {
-		e.preventDefault();
-		if (!selectedAnswer) {
+	const handleSubmit = async (e, auto = false) => {
+		if (e && e.preventDefault) e.preventDefault();
+		if (!selectedAnswer && !auto) {
 			alert("Please select an answer");
 			return;
 		}
