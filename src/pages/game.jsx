@@ -9,7 +9,6 @@ function Game() {
 	const [gameStatus, setGameStatus] = useState();
 	const [currentQuestion, setCurrentQuestion] = useState(1);
 	const [bet, setBet] = useState(null);
-	const [betSubmitted, setBetSubmitted] = useState(false);
 	const [questionDurations, setQuestionDurations] = useState([]);
 	const [isInitialized, setIsInitialized] = useState(false);
 
@@ -56,7 +55,7 @@ function Game() {
 		}, 500);
 
 		return () => clearInterval(intervalId);
-	}, [gameStatus]);
+	}, [gameStatus, teamId]);
 
 	useEffect(() => {
 		fetch(`${API_BASE}/api/allQuestionDurations`)
@@ -73,15 +72,6 @@ function Game() {
 		questionDurations.find(item => item.index === currentQuestion)
 			?.duration || 30;
 
-	const handleBetSubmit = betValue => {
-		setBet(betValue);
-		setBetSubmitted(true);
-	};
-
-	useEffect(() => {
-		if (gameStatus === "ended") setBetSubmitted(false);
-	}, [gameStatus]);
-
 	if (!isInitialized) {
 		return (
 			<div className="team-container">
@@ -90,7 +80,7 @@ function Game() {
 		);
 	}
 
-	if (questionDurations == 0 || !gameStatus) {
+	if (questionDurations === 0 || !gameStatus) {
 		return (
 			<div className="team-container">
 				<Loading msg="Loading..." />
@@ -114,20 +104,11 @@ function Game() {
 		);
 	}
 
-	if (gameStatus === "pending" && betSubmitted) {
-		return (
-			<div className="team-container">
-				<Loading msg="Waiting for host to start the question..." />
-			</div>
-		);
-	}
-
-	if (gameStatus === "pending" && !betSubmitted) {
+	if (gameStatus === "pending") {
 		return (
 			<div className="team-container">
 				<BettingPage
-					onBetSubmit={handleBetSubmit}
-					betSubmitted={betSubmitted}
+					onBetSubmit={setBet}
 					currentQuestion={currentQuestion}
 					numQuestions={questionDurations.length}
 					teamInfo={teamInfo}
@@ -136,7 +117,7 @@ function Game() {
 		);
 	}
 
-	if (gameStatus === "started" && betSubmitted) {
+	if (gameStatus === "started") {
 		return (
 			<div className="team-container">
 				<QuestionPage
@@ -152,7 +133,7 @@ function Game() {
 
 	return (
 		<div className="team-container">
-			<Loading msg="Loading..." />
+			<Loading msg="Something went wrong! Please wait..." />
 		</div>
 	);
 }

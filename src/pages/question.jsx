@@ -3,6 +3,7 @@ import { API_BASE } from "../constants/api";
 import { Answer } from "../components/radio_answer";
 import { Button } from "../components/button";
 import CheckIcon from "../assets/check.png";
+import Loading from "../components/loading";
 
 function QuestionPage({
 	bet,
@@ -12,16 +13,14 @@ function QuestionPage({
 	teamName,
 	numQuestions,
 }) {
-	// currentQuestion: the current question index (assumed 1-based)
 	const [selectedAnswer, setSelectedAnswer] = useState("");
 	const [timeLeft, setTimeLeft] = useState(currentDuration);
+	const [submitted, setSubmitted] = useState(false);
 
-	// When the questionDuration prop changes (new question), reset the timer.
 	useEffect(() => {
 		setTimeLeft(currentDuration);
 	}, [currentDuration]);
 
-	// Countdown timer logic.
 	useEffect(() => {
 		if (timeLeft <= 0) return;
 		const timerId = setInterval(() => {
@@ -30,18 +29,17 @@ function QuestionPage({
 		return () => clearInterval(timerId);
 	}, [timeLeft]);
 
-	// Update selected answer.
 	const updateAnswer = value => {
 		setSelectedAnswer(value);
 	};
 
-	// Handle answer submission.
 	const handleSubmit = async e => {
 		e.preventDefault();
 		if (!selectedAnswer) {
 			alert("Please select an answer");
 			return;
 		}
+
 		try {
 			const response = await fetch(`${API_BASE}/api/answerQuestion`, {
 				method: "POST",
@@ -54,10 +52,20 @@ function QuestionPage({
 			});
 			const data = await response.json();
 			console.log("Answer submitted:", data);
+			setSubmitted(true);
 		} catch (error) {
 			console.error("Error submitting answer", error);
 		}
 	};
+
+	if (submitted) {
+		return (
+			<>
+				<div className="timer">{timeLeft}</div>
+				<Loading msg="Waiting for the timer to run out..." />
+			</>
+		);
+	}
 
 	return (
 		<>

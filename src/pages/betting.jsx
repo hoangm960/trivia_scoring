@@ -6,17 +6,18 @@ import Loading from "../components/loading";
 
 const BettingPage = ({
 	onBetSubmit,
-	betSubmitted,
 	currentQuestion,
 	numQuestions,
 	teamInfo,
 }) => {
 	const [bet, setBet] = useState("");
+	const [betSubmitted, setBetSubmitted] = useState(false);
 
 	const handleBet = e => {
 		e.preventDefault();
 		const betValue = parseInt(bet, 10);
 		const currentCredit = teamInfo.credit;
+
 		if (isNaN(betValue) || betValue <= 0) {
 			alert("Please enter a positive number for your bet.");
 			return;
@@ -34,6 +35,8 @@ const BettingPage = ({
 			);
 			return;
 		}
+
+		setBetSubmitted(true);
 		onBetSubmit(betValue);
 	};
 
