@@ -47,6 +47,10 @@ function Game() {
 			fetch(`${API_BASE}/api/gameStatus`)
 				.then(res => res.json())
 				.then(data => {
+					const newStatus = data.status;
+					if (newStatus === "ended") {
+						history.push("game_over");
+					}
 					setGameStatus(data.status);
 				})
 				.catch(err =>
