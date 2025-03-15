@@ -39,7 +39,7 @@ function Game() {
 				setIsInitialized(true);
 			})
 			.catch(err => console.error("Error fetching team name:", err));
-	}, []);
+	}, [teamId]);
 
 	// Poll backend every 2 seconds for game status and current question.
 	useEffect(() => {
@@ -58,7 +58,7 @@ function Game() {
 				);
 		}, 1000);
 		return () => clearInterval(intervalId);
-	}, [gameStatus, teamId]);
+	}, [gameStatus, teamId, history]);
 
 	useEffect(() => {
 		fetch(`${API_BASE}/api/currentQuestion`)
@@ -85,7 +85,7 @@ function Game() {
 				setIsInitialized(true);
 			})
 			.catch(err => console.error("Error fetching team name:", err));
-	}, [gameStatus]);
+	}, [gameStatus, teamId]);
 
 	useEffect(() => {
 		fetch(`${API_BASE}/api/allQuestionDurations`)
