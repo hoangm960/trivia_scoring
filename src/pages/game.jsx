@@ -17,7 +17,29 @@ function Game() {
 
 	const teamId = localStorage.getItem("team");
 	const history = useHistory();
-	const [teamInfo, setTeamInfo] = useState({});
+	const [teamName, setTeamName] = useState("Team Name");
+	const [currentCredit, setCurrentCredit] = useState(0);
+
+	useEffect(() => {
+		fetch(`${API_BASE}/api/teamName`, {
+			method: "POST",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ teamID: teamId }),
+		})
+			.then(res => {
+				if (res.status === 400) return;
+				return res.json();
+			})
+			.then(data => {
+				if (!data) return;
+				setTeamName(data.name);
+				setIsInitialized(true);
+			})
+			.catch(err => console.error("Error fetching team name:", err));
+	}, []);
 
 	// Poll backend every 2 seconds for game status and current question.
 	useEffect(() => {
@@ -30,36 +52,36 @@ function Game() {
 				.catch(err =>
 					console.error("Error fetching game status:", err)
 				);
-
-			fetch(`${API_BASE}/api/teamInfo`, {
-				method: "POST",
-				headers: {
-					Accept: "application/json",
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ teamID: teamId }),
-			})
-				.then(res => {
-					if (res.status === 400) return;
-					return res.json();
-				})
-				.then(data => {
-					if (!data) return;
-					setTeamInfo({ ...data });
-					setIsInitialized(true);
-				})
-				.catch(err => console.error("Error fetching team info:", err));
-
-			fetch(`${API_BASE}/api/currentQuestion`)
-				.then(res => res.json())
-				.then(data => setCurrentQuestion(data.currentQuestion))
-				.catch(err =>
-					console.error("Error fetching current question:", err)
-				);
-		}, 2000);
-
+		}, 1000);
 		return () => clearInterval(intervalId);
 	}, [gameStatus, teamId]);
+
+	useEffect(() => {
+		fetch(`${API_BASE}/api/currentQuestion`)
+			.then(res => res.json())
+			.then(data => setCurrentQuestion(data.currentQuestion))
+			.catch(err =>
+				console.error("Error fetching current question:", err)
+			);
+		fetch(`${API_BASE}/api/teamCredit`, {
+			method: "POST",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ teamID: teamId }),
+		})
+			.then(res => {
+				if (res.status === 400) return;
+				return res.json();
+			})
+			.then(data => {
+				if (!data) return;
+				setCurrentCredit(data.credit);
+				setIsInitialized(true);
+			})
+			.catch(err => console.error("Error fetching team name:", err));
+	}, [gameStatus]);
 
 	useEffect(() => {
 		fetch(`${API_BASE}/api/allQuestionDurations`)
@@ -127,7 +149,10 @@ function Game() {
 					onBetSubmit={setBet}
 					currentQuestion={currentQuestion}
 					numQuestions={questionDurations.length}
-					teamInfo={teamInfo}
+					teamInfo={{
+						name: teamName,
+						credit: currentCredit,
+					}}
 				/>
 			</div>
 		);
