@@ -99,7 +99,7 @@ function Game() {
 	}, []);
 
 	const currentDuration =
-		questionDurations.find(item => item.index === currentQuestion)
+		questionDurations?.find(item => item.index === currentQuestion)
 			?.duration || 30;
 
 	const handleLogOut = async () => {
