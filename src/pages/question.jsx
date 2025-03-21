@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { API_BASE } from "../constants/api";
 import { Answer } from "../components/radio_answer";
-import { Button } from "../components/button";
-import CheckIcon from "../assets/check.png";
+// import { Button } from "../components/button";
+// import CheckIcon from "../assets/check.png";
 import Loading from "../components/loading";
 
 function QuestionPage({
@@ -13,7 +13,7 @@ function QuestionPage({
 	teamName,
 	numQuestions,
 }) {
-	const [selectedAnswer, setSelectedAnswer] = useState("");
+	const [selectedAnswer, setSelectedAnswer] = useState("E");
 	const [timeLeft, setTimeLeft] = useState(currentDuration);
 	const [submitted, setSubmitted] = useState(false);
 
@@ -41,7 +41,7 @@ function QuestionPage({
 
 	const handleSubmit = async (e, auto = false) => {
 		if (e && e.preventDefault) e.preventDefault();
-		if (!selectedAnswer && !auto) {
+		if (selectedAnswer==="E" && !auto) {
 			alert("Please select an answer");
 			return;
 		}
@@ -115,14 +115,14 @@ function QuestionPage({
 						/>
 					</div>
 				</div>
-				<div className="submit-button-container">
+				{/* <div className="submit-button-container">
 					<Button
 						text="Submit"
 						icon={CheckIcon}
 						inputType="submit"
 						onClick={handleSubmit}
 					/>
-				</div>
+				</div> */}
 			</div>
 		</>
 	);
