@@ -41,14 +41,14 @@ function Game() {
 			.catch(err => console.error("Error fetching team name:", err));
 	}, [teamId]);
 
-	// Poll backend every 2 seconds for game status and current question.
+	// Poll backend every 1 second for game status and current question.
 	useEffect(() => {
 		const intervalId = setInterval(() => {
 			fetch(`${API_BASE}/api/gameStatus`)
 				.then(res => res.json())
 				.then(data => {
 					const newStatus = data.status;
-					if (newStatus === "ended") {
+					if (newStatus === "finished") {
 						history.push("game_over");
 					}
 					setGameStatus(data.status);
@@ -142,6 +142,13 @@ function Game() {
 		return (
 			<div className="team-container">
 				<Loading msg="Waiting for next question..." />
+				<Button
+					id="logout"
+					type="destructive"
+					icon={LogOutIcon}
+					text="Logout"
+					onClick={handleLogOut}
+				/>
 			</div>
 		);
 	}
