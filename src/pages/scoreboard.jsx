@@ -5,6 +5,7 @@ import logo from "../assets/stem_club_logo.png";
 import { QUESTION_STATUS } from "../constants/questionConst";
 import { API_BASE } from "../constants/api.js";
 import Table from "../components/table_scoreboard";
+import { socket } from "../socket.js";
 
 function Scoreboard() {
 	const [questionDurations, setQuestionDurations] = useState([]);
@@ -29,32 +30,21 @@ function Scoreboard() {
 				if (!data) return;
 				setTeamsInfo(data.teams);
 			})
-			.catch(err => console.error("Error fetching team name:", err));
-	}, [gameStatus]);
-
-	// Poll backend every 1 second for game status and current question.
-	useEffect(() => {
-		const intervalId = setInterval(() => {
-			fetch(`${API_BASE}/api/gameStatus`)
-				.then(res => res.json())
-				.then(data => {
-					setGameStatus(data.status);
-				})
-				.catch(err =>
-					console.error("Error fetching game status:", err)
-				);
-		}, 1000);
-		return () => clearInterval(intervalId);
+			.catch(err => console.error("Error fetching teams data:", err));
 	}, [gameStatus]);
 
 	useEffect(() => {
-		fetch(`${API_BASE}/api/currentQuestion`)
-			.then(res => res.json())
-			.then(data => setCurrentQuestion(data.currentQuestion))
-			.catch(err =>
-				console.error("Error fetching current question:", err)
-			);
-	}, [gameStatus]);
+		function onGameDataEvent(newData) {
+			setGameStatus(newData.status);
+			setCurrentQuestion(newData.current_index);
+		}
+
+		socket.on("gameData", onGameDataEvent);
+
+		return () => {
+			socket.off("gameData", onGameDataEvent);
+		};
+	}, []);
 
 	useEffect(() => {
 		fetch(`${API_BASE}/api/allQuestionDurations`)
@@ -106,4 +96,3 @@ function Scoreboard() {
 }
 
 export default Scoreboard;
-
