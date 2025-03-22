@@ -34,25 +34,17 @@ function Scoreboard() {
 	}, []);
 
 	useEffect(() => {
-		function onGameStatusEvent(newStatus) {
-			setGameStatus(newStatus);
+		function onGameDataEvent(newData) {
+			setGameStatus(newData.status);
+			setCurrentQuestion(newData.current_index);
 		}
 
-		socket.on("gameStatus", onGameStatusEvent);
+		socket.on("gameData", onGameDataEvent);
 
 		return () => {
-			socket.off("gameStatus", onGameStatusEvent);
+			socket.off("gameData", onGameDataEvent);
 		};
 	}, []);
-
-	useEffect(() => {
-		fetch(`${API_BASE}/api/currentQuestion`)
-			.then(res => res.json())
-			.then(data => setCurrentQuestion(data.currentQuestion))
-			.catch(err =>
-				console.error("Error fetching current question:", err)
-			);
-	}, [gameStatus]);
 
 	useEffect(() => {
 		fetch(`${API_BASE}/api/allQuestionDurations`)

@@ -21,17 +21,15 @@ function Game() {
 	const [currentCredit, setCurrentCredit] = useState(0);
 
 	useEffect(() => {
-		function onGameStatusEvent(newStatus) {
-			if (newStatus === "finished") {
-				history.push("game_over");
-			}
-			setGameStatus(newStatus);
+		function onGameDataEvent(newData) {
+			setGameStatus(newData.status);
+			setCurrentQuestion(newData.current_index);
 		}
 
-		socket.on("gameStatus", onGameStatusEvent);
+		socket.on("gameData", onGameDataEvent);
 
 		return () => {
-			socket.off("gameStatus", onGameStatusEvent);
+			socket.off("gameData", onGameDataEvent);
 		};
 	}, [history]);
 
@@ -61,12 +59,6 @@ function Game() {
 	}, [teamId]);
 
 	useEffect(() => {
-		fetch(`${API_BASE}/api/currentQuestion`)
-			.then(res => res.json())
-			.then(data => setCurrentQuestion(data.currentQuestion))
-			.catch(err =>
-				console.error("Error fetching current question:", err)
-			);
 		fetch(`${API_BASE}/api/teamCredit`, {
 			method: "POST",
 			headers: {
