@@ -6,7 +6,6 @@ import { Answer } from "../components/radio_answer";
 import Loading from "../components/loading";
 
 function QuestionPage({
-	bet,
 	teamId,
 	currentQuestion,
 	currentDuration,
@@ -41,7 +40,7 @@ function QuestionPage({
 
 	const handleSubmit = async (e, auto = false) => {
 		if (e && e.preventDefault) e.preventDefault();
-		if (selectedAnswer==="E" && !auto) {
+		if (selectedAnswer === "E" && !auto) {
 			alert("Please select an answer");
 			return;
 		}
@@ -53,7 +52,6 @@ function QuestionPage({
 				body: JSON.stringify({
 					teamId,
 					answer: selectedAnswer,
-					bet,
 				}),
 			});
 			const data = await response.json();

@@ -11,7 +11,6 @@ import LogOutIcon from "../assets/logout.png";
 function Game() {
 	const [gameStatus, setGameStatus] = useState();
 	const [currentQuestion, setCurrentQuestion] = useState(1);
-	const [bet, setBet] = useState(null);
 	const [questionDurations, setQuestionDurations] = useState([]);
 	const [isInitialized, setIsInitialized] = useState(false);
 
@@ -104,7 +103,7 @@ function Game() {
 
 	const handleLogOut = async () => {
 		fetch(`${API_BASE}/api/logout`, {
-			method: "PATCH",
+			method: "PUT",
 			headers: {
 				Accept: "application/json",
 				"Content-Type": "application/json",
@@ -165,10 +164,10 @@ function Game() {
 		return (
 			<div className="team-container">
 				<BettingPage
-					onBetSubmit={setBet}
 					currentQuestion={currentQuestion}
 					numQuestions={questionDurations.length}
 					teamInfo={{
+						teamId: teamId,
 						name: teamName,
 						credit: currentCredit,
 					}}
@@ -181,7 +180,6 @@ function Game() {
 		return (
 			<div className="team-container">
 				<QuestionPage
-					bet={bet}
 					teamId={teamId}
 					currentQuestion={currentQuestion}
 					currentDuration={currentDuration}

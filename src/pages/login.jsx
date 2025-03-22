@@ -22,7 +22,7 @@ const LoginPage = () => {
 			.replaceAll(" ", "_");
 
 		const rawResponse = await fetch(`${API_BASE}/api/login`, {
-			method: "POST",
+			method: "PUT",
 			headers: {
 				Accept: "application/json",
 				"Content-Type": "application/json",

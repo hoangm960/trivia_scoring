@@ -3,44 +3,31 @@ import { InputBox } from "../components/input_box";
 import { Button } from "../components/button";
 import CheckIcon from "../assets/check.png";
 import Loading from "../components/loading";
+import { API_BASE } from "../constants/api";
 
-const BettingPage = ({
-	onBetSubmit,
-	currentQuestion,
-	numQuestions,
-	teamInfo,
-}) => {
+const BettingPage = ({ currentQuestion, numQuestions, teamInfo }) => {
 	const [bet, setBet] = useState("");
 	const [betSubmitted, setBetSubmitted] = useState(false);
 
-	const handleBet = e => {
+	const handleBet = async e => {
 		e.preventDefault();
 		const betValue = parseInt(bet, 10);
-		const currentCredit = teamInfo.credit;
 
-		if (isNaN(betValue) || betValue <= 0) {
-			alert("Please enter a positive number for your bet.");
-			return;
-		}
-		if (betValue > currentCredit) {
-			alert("Your bet cannot exceed your current team credit.");
-			return;
-		}
-		if (
-			currentQuestion <= 10 &&
-			betValue > Math.floor((currentCredit + 1) / 2)
-		) {
-			alert(
-				`For the first 10 questions, your bet can only be up to ${Math.floor((currentCredit + 1) / 2)}.`
-			);
-			return;
-		}
+		const response = await fetch(`${API_BASE}/api/bet`, {
+			method: "POST",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ teamID: teamInfo.teamId, bet: betValue }),
+		});
 
+		if (response.status === 400) {
+			return response.json().then(message => alert(message.error));
+		}
 		setBetSubmitted(true);
-		onBetSubmit(betValue);
 	};
 
-	// Optionally show a waiting message if the bet has been submitted.
 	if (betSubmitted) {
 		return (
 			<div className="submit-button-container">
