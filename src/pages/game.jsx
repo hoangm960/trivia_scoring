@@ -41,6 +41,7 @@ function Game() {
 				})
 				.catch(err => console.error("Error fetching team name:", err));
 		}, 2000);
+		return () => clearInterval(intervalId);
 	}, [teamId]);
 
 	// Poll backend every 1 second for game status and current question.
