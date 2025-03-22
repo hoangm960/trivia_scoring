@@ -5,6 +5,7 @@ import logo from "../assets/stem_club_logo.png";
 import { QUESTION_STATUS } from "../constants/questionConst";
 import { API_BASE } from "../constants/api.js";
 import Table from "../components/table_scoreboard";
+import { socket } from "../socket.js";
 
 function Scoreboard() {
 	const [questionDurations, setQuestionDurations] = useState([]);
@@ -32,20 +33,17 @@ function Scoreboard() {
 			.catch(err => console.error("Error fetching team name:", err));
 	}, []);
 
-	// Poll backend every 1 second for game status and current question.
 	useEffect(() => {
-		const intervalId = setInterval(() => {
-			fetch(`${API_BASE}/api/gameStatus`)
-				.then(res => res.json())
-				.then(data => {
-					setGameStatus(data.status);
-				})
-				.catch(err =>
-					console.error("Error fetching game status:", err)
-				);
-		}, 1000);
-		return () => clearInterval(intervalId);
-	}, [gameStatus]);
+		function onGameStatusEvent(newStatus) {
+			setGameStatus(newStatus);
+		}
+
+		socket.on("gameStatus", onGameStatusEvent);
+
+		return () => {
+			socket.off("gameStatus", onGameStatusEvent);
+		};
+	}, []);
 
 	useEffect(() => {
 		fetch(`${API_BASE}/api/currentQuestion`)
@@ -108,4 +106,3 @@ function Scoreboard() {
 }
 
 export default Scoreboard;
-
