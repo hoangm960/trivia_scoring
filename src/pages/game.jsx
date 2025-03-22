@@ -77,7 +77,7 @@ function Game() {
 				setIsInitialized(true);
 			})
 			.catch(err => console.error("Error fetching team name:", err));
-	}, [gameStatus, teamId]);
+	}, [gameStatus, currentQuestion, teamId]);
 
 	useEffect(() => {
 		fetch(`${API_BASE}/api/allQuestionDurations`)
