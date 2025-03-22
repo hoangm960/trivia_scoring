@@ -20,24 +20,27 @@ function Game() {
 	const [currentCredit, setCurrentCredit] = useState(0);
 
 	useEffect(() => {
-		fetch(`${API_BASE}/api/teamName`, {
-			method: "POST",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ teamID: teamId }),
-		})
-			.then(res => {
-				if (res.status === 400) return;
-				return res.json();
+		const intervalId = setInterval(() => {
+			fetch(`${API_BASE}/api/teamName`, {
+				method: "POST",
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ teamID: teamId }),
 			})
-			.then(data => {
-				if (!data) return;
-				setTeamName(data.name);
-				setIsInitialized(true);
-			})
-			.catch(err => console.error("Error fetching team name:", err));
+				.then(res => {
+					if (res.status === 400) return;
+					return res.json();
+				})
+				.then(data => {
+					if (!data) return;
+					setTeamName(data.name);
+					setIsInitialized(true);
+					clearInterval(intervalId);
+				})
+				.catch(err => console.error("Error fetching team name:", err));
+		}, 2000);
 	}, [teamId]);
 
 	// Poll backend every 1 second for game status and current question.
