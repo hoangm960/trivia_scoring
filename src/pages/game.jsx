@@ -103,6 +103,14 @@ function Game() {
 			?.duration || 30;
 
 	const handleLogOut = async () => {
+		fetch(`${API_BASE}/api/logout`, {
+			method: "PATCH",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ teamID: teamId }),
+		});
 		localStorage.removeItem("team");
 		history.push("/");
 	};

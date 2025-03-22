@@ -42,8 +42,7 @@ const LoginPage = () => {
 		if (localStorage.getItem("team")) {
 			history.push("/game");
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [history]);
 
 	return (
 		<div className="login-container">
