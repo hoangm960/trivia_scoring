@@ -30,8 +30,8 @@ function Scoreboard() {
 				if (!data) return;
 				setTeamsInfo(data.teams);
 			})
-			.catch(err => console.error("Error fetching team name:", err));
-	}, []);
+			.catch(err => console.error("Error fetching teams data:", err));
+	}, [gameStatus]);
 
 	useEffect(() => {
 		function onGameDataEvent(newData) {
