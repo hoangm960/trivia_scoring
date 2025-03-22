@@ -7,6 +7,7 @@ import "./style/team.css";
 import { Button } from "../components/button";
 import { useHistory } from "react-router-dom";
 import LogOutIcon from "../assets/logout.png";
+import { socket } from "../socket.js";
 
 function Game() {
 	const [gameStatus, setGameStatus] = useState();
@@ -18,6 +19,21 @@ function Game() {
 	const history = useHistory();
 	const [teamName, setTeamName] = useState("Team Name");
 	const [currentCredit, setCurrentCredit] = useState(0);
+
+	useEffect(() => {
+		function onGameStatusEvent(newStatus) {
+			if (newStatus === "finished") {
+				history.push("game_over");
+			}
+			setGameStatus(newStatus);
+		}
+
+		socket.on("gameStatus", onGameStatusEvent);
+
+		return () => {
+			socket.off("gameStatus", onGameStatusEvent);
+		};
+	}, [history]);
 
 	useEffect(() => {
 		const intervalId = setInterval(() => {
@@ -43,25 +59,6 @@ function Game() {
 		}, 2000);
 		return () => clearInterval(intervalId);
 	}, [teamId]);
-
-	// Poll backend every 1 second for game status and current question.
-	useEffect(() => {
-		const intervalId = setInterval(() => {
-			fetch(`${API_BASE}/api/gameStatus`)
-				.then(res => res.json())
-				.then(data => {
-					const newStatus = data.status;
-					if (newStatus === "finished") {
-						history.push("game_over");
-					}
-					setGameStatus(data.status);
-				})
-				.catch(err =>
-					console.error("Error fetching game status:", err)
-				);
-		}, 1000);
-		return () => clearInterval(intervalId);
-	}, [gameStatus, teamId, history]);
 
 	useEffect(() => {
 		fetch(`${API_BASE}/api/currentQuestion`)
