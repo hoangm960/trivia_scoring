@@ -87,8 +87,8 @@ function Game() {
 				setCurrentCredit(data.credit);
 				setIsInitialized(true);
 			})
-			.catch(err => console.error("Error fetching team name:", err));
-	}, [gameStatus, teamId]);
+			.catch(err => console.error("Error fetching team credit:", err));
+	}, [gameStatus, currentQuestion, teamId]);
 
 	useEffect(() => {
 		fetch(`${API_BASE}/api/allQuestionDurations`)

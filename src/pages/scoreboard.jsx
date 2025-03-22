@@ -87,10 +87,8 @@ function Scoreboard() {
 	return (
 		<div className="scoreboard-container">
 			<img src={logo} alt="Logo" className="logo" />
-			{gameStatus === QUESTION_STATUS.IN_PROGRESS ? (
+			{gameStatus === QUESTION_STATUS.IN_PROGRESS && (
 				<div className="scoreboard-timer">{timeLeft}</div>
-			) : (
-				<></>
 			)}
 			<div className="scoreboard-title-container">
 				<span className="scoreboard-title">SCOREBOARD</span>
