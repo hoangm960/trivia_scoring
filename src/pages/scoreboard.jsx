@@ -30,7 +30,7 @@ function Scoreboard() {
 				setTeamsInfo(data.teams);
 			})
 			.catch(err => console.error("Error fetching team name:", err));
-	}, []);
+	}, [gameStatus]);
 
 	// Poll backend every 1 second for game status and current question.
 	useEffect(() => {
