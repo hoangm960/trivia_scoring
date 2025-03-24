@@ -1,76 +1,98 @@
-import React, { useEffect } from 'react';
-import './style/scoreboard.css';
-import Loading from '../components/loading';
+import React, { useEffect, useState } from "react";
+import "./style/scoreboard.css";
+import Loading from "../components/loading";
 import logo from "../assets/stem_club_logo.png";
-import useQuestions from '../hooks/useQuestions';
-import useQuestionStatus from '../hooks/useQuestionStatus';
-import useQuestionCurrentIndex from '../hooks/useQuestionCurrentIndex';
-import useTeams from '../hooks/useTeams';
-import { QUESTION_STATUS } from '../constants/questionConst';
+import { QUESTION_STATUS } from "../constants/questionConst";
+import { API_BASE } from "../constants/api.js";
+import Table from "../components/table_scoreboard";
+import { socket } from "../socket.js";
 
 function Scoreboard() {
-	const [questions, questionLoading] = useQuestions();
-	const questionStatus = useQuestionStatus();
-	const currentQuestionIndex = useQuestionCurrentIndex();
-	const teams = useTeams();
-	const [duration, setDuration] = React.useState(null);
-	const [isLoading, setIsLoading] = React.useState(false);
-
+	const [questionDurations, setQuestionDurations] = useState([]);
+	const [gameStatus, setGameStatus] = useState();
+	const [currentQuestion, setCurrentQuestion] = useState(1);
+	const [teamsInfo, setTeamsInfo] = useState([]);
+	const [timeLeft, setTimeLeft] = React.useState(null);
 
 	useEffect(() => {
-		if (questionStatus === QUESTION_STATUS.NOT_STARTED) {
-			setDuration(0);
-		}
-		if (questionStatus === QUESTION_STATUS.IN_PROGRESS) {
-			setDuration(questions[currentQuestionIndex - 1].duration);
-		}
-	}, [questionStatus, questions, currentQuestionIndex]);
+		fetch(`${API_BASE}/api/teams`, {
+			method: "GET",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+		})
+			.then(res => {
+				if (res.status === 400) return;
+				return res.json();
+			})
+			.then(data => {
+				if (!data) return;
+				setTeamsInfo(data.teams);
+			})
+			.catch(err => console.error("Error fetching teams data:", err));
+	}, [gameStatus]);
 
 	useEffect(() => {
-		if (duration === 0) {
-			setDuration(null);
+		function onGameDataEvent(newData) {
+			setGameStatus(newData.status);
+			setCurrentQuestion(newData.current_index);
 		}
 
-		if (!duration) return;
+		socket.on("gameData", onGameDataEvent);
 
-		const interval = setInterval(() => {
-			setDuration(duration - 1);
+		return () => {
+			socket.off("gameData", onGameDataEvent);
+		};
+	}, []);
+
+	useEffect(() => {
+		fetch(`${API_BASE}/api/allQuestionDurations`)
+			.then(res => res.json())
+			.then(data => {
+				setQuestionDurations(data.durations);
+			})
+			.catch(err =>
+				console.error("Error fetching question durations:", err)
+			);
+	}, []);
+
+	useEffect(() => {
+		if (gameStatus === "started") {
+			const currentDuration =
+				questionDurations?.find(item => item.index === currentQuestion)
+					?.duration || 30;
+			setTimeLeft(currentDuration);
+		}
+	}, [gameStatus, currentQuestion, questionDurations]);
+
+	useEffect(() => {
+		if (timeLeft <= 0) return;
+		const timerId = setInterval(() => {
+			setTimeLeft(prev => prev - 1);
 		}, 1000);
-		return () => clearInterval(interval);
-	}, [duration]);
-
-	useEffect(() => {
-		setIsLoading(questionLoading || teams.length === 0);
-	}, [questionLoading, teams]);
-
-
+		return () => clearInterval(timerId);
+	}, [timeLeft]);
 
 	return (
 		<div className="scoreboard-container">
 			<img src={logo} alt="Logo" className="logo" />
-			{questionStatus === QUESTION_STATUS.IN_PROGRESS ?
-				<div className="scoreboard-timer">{duration}</div> : <></>
-			}
-			<div className='scoreboard-title-container'>
+			{gameStatus === QUESTION_STATUS.IN_PROGRESS && (
+				<div className="scoreboard-timer">{timeLeft}</div>
+			)}
+			<div className="scoreboard-title-container">
 				<span className="scoreboard-title">SCOREBOARD</span>
 			</div>
-			{isLoading ?
-				<Loading msg="Loading scoreboard..." /> :
-				<>
-					<table>
-						<tr className='column-labels'>
-							<td><div className="label-rank team-info-text-2">Rank</div></td>
-							<td><div className="label-name-scoreboard team-info-text-2">Team name</div></td>
-							<td><div className="label-correct-answer team-info-text-2">Correct</div></td>
-							<td><div className="label-score team-info-text-2">Score</div></td>
-						</tr>
-						{teams}
-					</table>
-				</>
-			}
+			{questionDurations === 0 || !gameStatus ? (
+				<Loading msg="Loading scoreboard..." />
+			) : (
+				<Table
+					teams={teamsInfo}
+					currentQuestion={currentQuestion}
+				></Table>
+			)}
 		</div>
 	);
 }
-
 
 export default Scoreboard;
