@@ -1,7 +1,9 @@
 const QUESTION_STATUS = {
-    NOT_STARTED: 'pending',
-    IN_PROGRESS: 'started',
-    FINISHED: 'ended'
+	NOT_STARTED: "pending",
+	IN_PROGRESS: "started",
+	FINISHED: "ended",
+	SUMMARIZED: "summarized",
 };
 
-export {QUESTION_STATUS};
+export { QUESTION_STATUS };
+

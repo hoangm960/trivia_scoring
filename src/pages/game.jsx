@@ -8,6 +8,7 @@ import { Button } from "../components/button";
 import { useHistory } from "react-router-dom";
 import LogOutIcon from "../assets/logout.png";
 import { socket } from "../socket.js";
+import { QUESTION_STATUS } from "../constants/questionConst.js";
 
 function Game() {
 	const [gameStatus, setGameStatus] = useState();
@@ -131,7 +132,7 @@ function Game() {
 		);
 	}
 
-	if (betSubmitted && gameStatus === "pending") {
+	if (betSubmitted && gameStatus === QUESTION_STATUS.NOT_STARTED) {
 		return (
 			<div className="team-container">
 				<Loading msg="Waiting for host to start the question..." />
@@ -139,7 +140,7 @@ function Game() {
 		);
 	}
 
-	if (gameStatus === "ended") {
+	if (gameStatus === QUESTION_STATUS.FINISHED) {
 		return (
 			<div className="team-container">
 				<Loading msg="Waiting for host to tally up the score..." />
@@ -147,7 +148,7 @@ function Game() {
 		);
 	}
 
-	if (gameStatus === "summarized") {
+	if (gameStatus === QUESTION_STATUS.SUMMARIZED) {
 		return (
 			<div className="team-container">
 				<Loading msg="Waiting for next question..." />
@@ -162,7 +163,7 @@ function Game() {
 		);
 	}
 
-	if (gameStatus === "pending") {
+	if (gameStatus === QUESTION_STATUS.NOT_STARTED) {
 		return (
 			<div className="team-container">
 				<BettingPage
@@ -179,7 +180,7 @@ function Game() {
 		);
 	}
 
-	if (gameStatus === "started") {
+	if (gameStatus === QUESTION_STATUS.IN_PROGRESS) {
 		return (
 			<div className="team-container">
 				<QuestionPage
