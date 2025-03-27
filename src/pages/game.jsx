@@ -17,8 +17,9 @@ function Game() {
 
 	const teamId = localStorage.getItem("team");
 	const history = useHistory();
-	const [teamName, setTeamName] = useState("Team Name");
+	const [teamName, setTeamName] = useState();
 	const [currentCredit, setCurrentCredit] = useState(0);
+	const [betSubmitted, setBetSubmitted] = useState(false);
 
 	useEffect(() => {
 		function onGameDataEvent(newData) {
@@ -122,10 +123,18 @@ function Game() {
 		);
 	}
 
-	if (questionDurations === 0 || !gameStatus) {
+	if (questionDurations === 0 || !gameStatus || !teamName) {
 		return (
 			<div className="team-container">
 				<Loading msg="Loading..." />
+			</div>
+		);
+	}
+
+	if (betSubmitted && gameStatus === "pending") {
+		return (
+			<div className="team-container">
+				<Loading msg="Waiting for host to start the question..." />
 			</div>
 		);
 	}
@@ -164,6 +173,7 @@ function Game() {
 						name: teamName,
 						credit: currentCredit,
 					}}
+					setBetSubmitted={setBetSubmitted}
 				/>
 			</div>
 		);
