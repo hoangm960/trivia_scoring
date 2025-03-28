@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { InputBox } from "../components/input_box";
 import { Button } from "../components/button";
 import CheckIcon from "../assets/check.png";
-import { API_BASE } from "../constants/api";
+import { fetchData } from "../helper/handleData.js";
 
 const BettingPage = ({
 	currentQuestion,
@@ -16,19 +16,12 @@ const BettingPage = ({
 		e.preventDefault();
 		const betValue = parseInt(bet, 10);
 
-		const response = await fetch(`${API_BASE}/api/bet`, {
-			method: "POST",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ teamID: teamInfo.teamId, bet: betValue }),
-		});
-
-		if (response.status === 400) {
-			return response.json().then(message => alert(message.error));
-		}
-		setBetSubmitted(true);
+		fetchData(
+			"bet",
+			"POST",
+			{ teamID: teamInfo.teamId, bet: betValue },
+			_ => setBetSubmitted(true)
+		);
 	};
 
 	return (

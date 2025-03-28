@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import BettingPage from "./betting";
 import QuestionPage from "./question";
-import { API_BASE } from "../constants/api";
 import Loading from "../components/loading";
 import "./style/team.css";
 import { Button } from "../components/button";
@@ -9,6 +8,7 @@ import { useHistory } from "react-router-dom";
 import LogOutIcon from "../assets/logout.png";
 import { socket } from "../socket.js";
 import { QUESTION_STATUS } from "../constants/questionConst.js";
+import { fetchData } from "../helper/handleData.js";
 
 function Game() {
 	const [gameStatus, setGameStatus] = useState();
@@ -36,77 +36,33 @@ function Game() {
 	}, [history]);
 
 	useEffect(() => {
-		const intervalId = setInterval(() => {
-			fetch(`${API_BASE}/api/teamName`, {
-				method: "POST",
-				headers: {
-					Accept: "application/json",
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ teamID: teamId }),
-			})
-				.then(res => {
-					if (res.status === 400) return;
-					return res.json();
-				})
-				.then(data => {
-					if (!data) return;
-					setTeamName(data.name);
-					setIsInitialized(true);
-					clearInterval(intervalId);
-				})
-				.catch(err => console.error("Error fetching team name:", err));
-		}, 2000);
-		return () => clearInterval(intervalId);
+		fetchData("teamName", "POST", { teamID: teamId }, data => {
+			setTeamName(data.name);
+		});
 	}, [teamId]);
 
 	useEffect(() => {
-		fetch(`${API_BASE}/api/teamCredit`, {
-			method: "POST",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ teamID: teamId }),
-		})
-			.then(res => {
-				if (res.status === 400) return;
-				return res.json();
-			})
-			.then(data => {
-				if (!data) return;
-				setCurrentCredit(data.credit);
-				setIsInitialized(true);
-			})
-			.catch(err => console.error("Error fetching team credit:", err));
+		fetchData("teamCredit", "POST", { teamID: teamId }, data => {
+			setCurrentCredit(data.credit);
+			setIsInitialized(true);
+		});
 	}, [gameStatus, currentQuestion, teamId]);
 
 	useEffect(() => {
-		fetch(`${API_BASE}/api/allQuestionDurations`)
-			.then(res => res.json())
-			.then(data => {
-				setQuestionDurations(data.durations);
-			})
-			.catch(err =>
-				console.error("Error fetching question durations:", err)
-			);
+		fetchData("allQuestionDurations", undefined, undefined, data =>
+			setQuestionDurations(data.durations)
+		);
 	}, []);
 
-	const currentDuration =
-		questionDurations?.find(item => item.index === currentQuestion)
-			?.duration || 30;
+	const currentDuration = questionDurations.find(
+		item => item.index === currentQuestion
+	)?.duration;
 
 	const handleLogOut = async () => {
-		fetch(`${API_BASE}/api/logout`, {
-			method: "PUT",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ teamID: teamId }),
+		fetchData("logout", "PUT", { teamID: teamId }, _ => {
+			localStorage.removeItem("team");
+			history.push("/");
 		});
-		localStorage.removeItem("team");
-		history.push("/");
 	};
 
 	if (!isInitialized) {
@@ -124,7 +80,7 @@ function Game() {
 		);
 	}
 
-	if (questionDurations === 0 || !gameStatus || !teamName) {
+	if (questionDurations?.length === 0 || !gameStatus || !teamName) {
 		return (
 			<div className="team-container">
 				<Loading msg="Loading..." />
