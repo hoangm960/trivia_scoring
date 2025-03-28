@@ -13,6 +13,7 @@ import { fetchData } from "../helper/handleData.js";
 function Game() {
 	const [gameStatus, setGameStatus] = useState();
 	const [currentQuestion, setCurrentQuestion] = useState(1);
+	const [currentDuration, setCurrentDuration] = useState();
 	const [questionDurations, setQuestionDurations] = useState([]);
 	const [isInitialized, setIsInitialized] = useState(false);
 
@@ -60,9 +61,14 @@ function Game() {
 		}
 	}, [gameStatus]);
 
-	const currentDuration = questionDurations.find(
-		item => item.index === currentQuestion
-	)?.duration;
+	useEffect(() => {
+		if (gameStatus === QUESTION_STATUS.NOT_STARTED) {
+			const newDuration = questionDurations.find(
+				item => item.index === currentQuestion
+			)?.duration;
+			setCurrentDuration(newDuration);
+		}
+	}, [gameStatus, questionDurations, currentQuestion]);
 
 	const handleLogOut = async () => {
 		fetchData("logout", "PUT", { teamID: teamId }, _ => {
