@@ -26,10 +26,12 @@ function Scoreboard() {
 			setCurrentQuestion(newData.current_index);
 		}
 
+		socket.connect();
 		socket.on("gameData", onGameDataEvent);
 
 		return () => {
 			socket.off("gameData", onGameDataEvent);
+			socket.disconnect();
 		};
 	}, []);
 
@@ -67,6 +69,8 @@ function Scoreboard() {
 			</div>
 			{questionDurations === 0 || !gameStatus ? (
 				<Loading msg="Loading scoreboard..." />
+			) : gameStatus === GAME_STATUS.NOT_INITIALIZE ? (
+				<Loading msg="Waiting for host to initialize the game..." />
 			) : (
 				<Table
 					teams={teamsInfo}

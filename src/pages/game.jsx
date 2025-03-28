@@ -45,7 +45,7 @@ function Game() {
 
 	useEffect(() => {
 		if (gameStatus === GAME_STATUS.NOT_INITIALIZE) return;
-		console.log(gameStatus);
+
 		fetchData("teamCredit", "POST", { teamID: teamId }, data => {
 			setCurrentCredit(data.credit);
 		});
