@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from "react";
 import BettingPage from "./betting";
 import QuestionPage from "./question";
-import { API_BASE } from "../constants/api";
 import Loading from "../components/loading";
 import "./style/team.css";
 import { Button } from "../components/button";
 import { useHistory } from "react-router-dom";
 import LogOutIcon from "../assets/logout.png";
 import { socket } from "../socket.js";
+import { GAME_STATUS } from "../constants/questionConst.js";
+import { fetchData } from "../helper/handleData.js";
 
 function Game() {
 	const [gameStatus, setGameStatus] = useState();
 	const [currentQuestion, setCurrentQuestion] = useState(1);
+	const [currentDuration, setCurrentDuration] = useState();
 	const [questionDurations, setQuestionDurations] = useState([]);
-	const [isInitialized, setIsInitialized] = useState(false);
 
 	const teamId = localStorage.getItem("team");
 	const history = useHistory();
@@ -27,88 +28,58 @@ function Game() {
 			setCurrentQuestion(newData.current_index);
 		}
 
+		socket.connect();
 		socket.on("gameData", onGameDataEvent);
 
 		return () => {
 			socket.off("gameData", onGameDataEvent);
+			socket.disconnect();
 		};
-	}, [history]);
+	}, []);
 
 	useEffect(() => {
-		const intervalId = setInterval(() => {
-			fetch(`${API_BASE}/api/teamName`, {
-				method: "POST",
-				headers: {
-					Accept: "application/json",
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ teamID: teamId }),
-			})
-				.then(res => {
-					if (res.status === 400) return;
-					return res.json();
-				})
-				.then(data => {
-					if (!data) return;
-					setTeamName(data.name);
-					setIsInitialized(true);
-					clearInterval(intervalId);
-				})
-				.catch(err => console.error("Error fetching team name:", err));
-		}, 2000);
-		return () => clearInterval(intervalId);
+		fetchData("teamName", "POST", { teamID: teamId }, data => {
+			setTeamName(data.name);
+		});
 	}, [teamId]);
 
 	useEffect(() => {
-		fetch(`${API_BASE}/api/teamCredit`, {
-			method: "POST",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ teamID: teamId }),
-		})
-			.then(res => {
-				if (res.status === 400) return;
-				return res.json();
-			})
-			.then(data => {
-				if (!data) return;
-				setCurrentCredit(data.credit);
-				setIsInitialized(true);
-			})
-			.catch(err => console.error("Error fetching team credit:", err));
-	}, [gameStatus, currentQuestion, teamId]);
+		if (!gameStatus || gameStatus === GAME_STATUS.NOT_INITIALIZE) return;
+
+		fetchData("teamCredit", "POST", { teamID: teamId }, data => {
+			setCurrentCredit(data.credit);
+		});
+	}, [gameStatus, teamId]);
 
 	useEffect(() => {
-		fetch(`${API_BASE}/api/allQuestionDurations`)
-			.then(res => res.json())
-			.then(data => {
-				setQuestionDurations(data.durations);
-			})
-			.catch(err =>
-				console.error("Error fetching question durations:", err)
-			);
+		fetchData("allQuestionDurations", undefined, undefined, data =>
+			setQuestionDurations(data.durations)
+		);
 	}, []);
 
-	const currentDuration =
-		questionDurations?.find(item => item.index === currentQuestion)
-			?.duration || 30;
+	useEffect(() => {
+		if (gameStatus === GAME_STATUS.SUMMARIZED) {
+			setBetSubmitted(false);
+		}
+	}, [gameStatus]);
+
+	useEffect(() => {
+		if (gameStatus === GAME_STATUS.NOT_STARTED) {
+			const newDuration = questionDurations.find(
+				item => item.index === currentQuestion
+			)?.duration;
+			setCurrentDuration(newDuration);
+		}
+	}, [gameStatus, questionDurations, currentQuestion]);
 
 	const handleLogOut = async () => {
-		fetch(`${API_BASE}/api/logout`, {
-			method: "PUT",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ teamID: teamId }),
+		fetchData("logout", "PUT", { teamID: teamId }, _ => {
+			localStorage.removeItem("team");
+			history.push("/");
 		});
-		localStorage.removeItem("team");
-		history.push("/");
 	};
 
-	if (!isInitialized) {
+	if (gameStatus === GAME_STATUS.NOT_INITIALIZE) {
 		return (
 			<div className="team-container">
 				<Loading msg="Waiting for host to initialize the game..." />
@@ -123,7 +94,7 @@ function Game() {
 		);
 	}
 
-	if (questionDurations === 0 || !gameStatus || !teamName) {
+	if (questionDurations?.length === 0 || !gameStatus || !teamName) {
 		return (
 			<div className="team-container">
 				<Loading msg="Loading..." />
@@ -131,7 +102,7 @@ function Game() {
 		);
 	}
 
-	if (betSubmitted && gameStatus === "pending") {
+	if (betSubmitted && gameStatus === GAME_STATUS.NOT_STARTED) {
 		return (
 			<div className="team-container">
 				<Loading msg="Waiting for host to start the question..." />
@@ -139,7 +110,7 @@ function Game() {
 		);
 	}
 
-	if (gameStatus === "ended") {
+	if (gameStatus === GAME_STATUS.FINISHED) {
 		return (
 			<div className="team-container">
 				<Loading msg="Waiting for host to tally up the score..." />
@@ -147,7 +118,7 @@ function Game() {
 		);
 	}
 
-	if (gameStatus === "summarized") {
+	if (gameStatus === GAME_STATUS.SUMMARIZED) {
 		return (
 			<div className="team-container">
 				<Loading msg="Waiting for next question..." />
@@ -162,7 +133,7 @@ function Game() {
 		);
 	}
 
-	if (gameStatus === "pending") {
+	if (gameStatus === GAME_STATUS.NOT_STARTED) {
 		return (
 			<div className="team-container">
 				<BettingPage
@@ -179,7 +150,7 @@ function Game() {
 		);
 	}
 
-	if (gameStatus === "started") {
+	if (gameStatus === GAME_STATUS.IN_PROGRESS) {
 		return (
 			<div className="team-container">
 				<QuestionPage
@@ -190,6 +161,10 @@ function Game() {
 				/>
 			</div>
 		);
+	}
+
+	if (currentQuestion === questionDurations.length) {
+		return history.push("/game_over");
 	}
 
 	return (
