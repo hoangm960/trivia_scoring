@@ -155,6 +155,10 @@ function Game() {
 		);
 	}
 
+	if (currentQuestion === questionDurations.length) {
+		return history.push("/game_over");
+	}
+
 	return (
 		<div className="team-container">
 			<Loading msg="Something went wrong! Please wait..." />
