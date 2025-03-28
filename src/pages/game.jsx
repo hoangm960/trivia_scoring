@@ -7,7 +7,7 @@ import { Button } from "../components/button";
 import { useHistory } from "react-router-dom";
 import LogOutIcon from "../assets/logout.png";
 import { socket } from "../socket.js";
-import { QUESTION_STATUS } from "../constants/questionConst.js";
+import { GAME_STATUS } from "../constants/questionConst.js";
 import { fetchData } from "../helper/handleData.js";
 
 function Game() {
@@ -15,7 +15,6 @@ function Game() {
 	const [currentQuestion, setCurrentQuestion] = useState(1);
 	const [currentDuration, setCurrentDuration] = useState();
 	const [questionDurations, setQuestionDurations] = useState([]);
-	const [isInitialized, setIsInitialized] = useState(false);
 
 	const teamId = localStorage.getItem("team");
 	const history = useHistory();
@@ -29,12 +28,14 @@ function Game() {
 			setCurrentQuestion(newData.current_index);
 		}
 
+		socket.connect();
 		socket.on("gameData", onGameDataEvent);
 
 		return () => {
 			socket.off("gameData", onGameDataEvent);
+			socket.disconnect();
 		};
-	}, [history]);
+	}, []);
 
 	useEffect(() => {
 		fetchData("teamName", "POST", { teamID: teamId }, data => {
@@ -43,9 +44,10 @@ function Game() {
 	}, [teamId]);
 
 	useEffect(() => {
+		if (gameStatus === GAME_STATUS.NOT_INITIALIZE) return;
+		console.log(gameStatus);
 		fetchData("teamCredit", "POST", { teamID: teamId }, data => {
 			setCurrentCredit(data.credit);
-			setIsInitialized(true);
 		});
 	}, [gameStatus, currentQuestion, teamId]);
 
@@ -56,13 +58,13 @@ function Game() {
 	}, []);
 
 	useEffect(() => {
-		if (gameStatus === QUESTION_STATUS.SUMMARIZED) {
+		if (gameStatus === GAME_STATUS.SUMMARIZED) {
 			setBetSubmitted(false);
 		}
 	}, [gameStatus]);
 
 	useEffect(() => {
-		if (gameStatus === QUESTION_STATUS.NOT_STARTED) {
+		if (gameStatus === GAME_STATUS.NOT_STARTED) {
 			const newDuration = questionDurations.find(
 				item => item.index === currentQuestion
 			)?.duration;
@@ -77,7 +79,7 @@ function Game() {
 		});
 	};
 
-	if (!isInitialized) {
+	if (gameStatus === GAME_STATUS.NOT_INITIALIZE) {
 		return (
 			<div className="team-container">
 				<Loading msg="Waiting for host to initialize the game..." />
@@ -100,7 +102,7 @@ function Game() {
 		);
 	}
 
-	if (betSubmitted && gameStatus === QUESTION_STATUS.NOT_STARTED) {
+	if (betSubmitted && gameStatus === GAME_STATUS.NOT_STARTED) {
 		return (
 			<div className="team-container">
 				<Loading msg="Waiting for host to start the question..." />
@@ -108,7 +110,7 @@ function Game() {
 		);
 	}
 
-	if (gameStatus === QUESTION_STATUS.FINISHED) {
+	if (gameStatus === GAME_STATUS.FINISHED) {
 		return (
 			<div className="team-container">
 				<Loading msg="Waiting for host to tally up the score..." />
@@ -116,7 +118,7 @@ function Game() {
 		);
 	}
 
-	if (gameStatus === QUESTION_STATUS.SUMMARIZED) {
+	if (gameStatus === GAME_STATUS.SUMMARIZED) {
 		return (
 			<div className="team-container">
 				<Loading msg="Waiting for next question..." />
@@ -131,7 +133,7 @@ function Game() {
 		);
 	}
 
-	if (gameStatus === QUESTION_STATUS.NOT_STARTED) {
+	if (gameStatus === GAME_STATUS.NOT_STARTED) {
 		return (
 			<div className="team-container">
 				<BettingPage
@@ -148,7 +150,7 @@ function Game() {
 		);
 	}
 
-	if (gameStatus === QUESTION_STATUS.IN_PROGRESS) {
+	if (gameStatus === GAME_STATUS.IN_PROGRESS) {
 		return (
 			<div className="team-container">
 				<QuestionPage

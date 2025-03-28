@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./style/scoreboard.css";
 import Loading from "../components/loading";
 import logo from "../assets/stem_club_logo.png";
-import { QUESTION_STATUS } from "../constants/questionConst";
+import { GAME_STATUS } from "../constants/questionConst";
 import Table from "../components/table_scoreboard";
 import { socket } from "../socket.js";
 import { fetchData } from "../helper/handleData.js";
@@ -40,7 +40,7 @@ function Scoreboard() {
 	}, []);
 
 	useEffect(() => {
-		if (gameStatus === QUESTION_STATUS.IN_PROGRESS) {
+		if (gameStatus === GAME_STATUS.IN_PROGRESS) {
 			const currentDuration =
 				questionDurations?.find(item => item.index === currentQuestion)
 					?.duration || 30;
@@ -59,7 +59,7 @@ function Scoreboard() {
 	return (
 		<div className="scoreboard-container">
 			<img src={logo} alt="Logo" className="logo" />
-			{gameStatus === QUESTION_STATUS.IN_PROGRESS && (
+			{gameStatus === GAME_STATUS.IN_PROGRESS && (
 				<div className="scoreboard-timer">{timeLeft}</div>
 			)}
 			<div className="scoreboard-title-container">
