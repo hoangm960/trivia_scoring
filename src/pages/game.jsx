@@ -44,12 +44,12 @@ function Game() {
 	}, [teamId]);
 
 	useEffect(() => {
-		if (gameStatus === GAME_STATUS.NOT_INITIALIZE) return;
+		if (!gameStatus || gameStatus === GAME_STATUS.NOT_INITIALIZE) return;
 
 		fetchData("teamCredit", "POST", { teamID: teamId }, data => {
 			setCurrentCredit(data.credit);
 		});
-	}, [gameStatus, currentQuestion, teamId]);
+	}, [gameStatus, teamId]);
 
 	useEffect(() => {
 		fetchData("allQuestionDurations", undefined, undefined, data =>
