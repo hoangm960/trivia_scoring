@@ -54,6 +54,12 @@ function Game() {
 		);
 	}, []);
 
+	useEffect(() => {
+		if (gameStatus === QUESTION_STATUS.SUMMARIZED) {
+			setBetSubmitted(false);
+		}
+	}, [gameStatus]);
+
 	const currentDuration = questionDurations.find(
 		item => item.index === currentQuestion
 	)?.duration;
