@@ -21,9 +21,11 @@ function Game() {
 	const [teamName, setTeamName] = useState();
 	const [currentCredit, setCurrentCredit] = useState(0);
 	const [betSubmitted, setBetSubmitted] = useState(false);
+	const [isGameIDSet, setIsGameIDSet] = useState(false);
 
 	useEffect(() => {
 		function onGameDataEvent(newData) {
+			setIsGameIDSet(newData.gameID !== "");
 			setGameStatus(newData.status);
 			setCurrentQuestion(newData.current_index);
 		}
@@ -52,10 +54,12 @@ function Game() {
 	}, [gameStatus, teamId]);
 
 	useEffect(() => {
+		if (!isGameIDSet) return;
+
 		fetchData("allQuestionDurations", undefined, undefined, data =>
 			setQuestionDurations(data.durations)
 		);
-	}, []);
+	}, [isGameIDSet]);
 
 	useEffect(() => {
 		if (gameStatus === GAME_STATUS.SUMMARIZED) {
@@ -79,7 +83,7 @@ function Game() {
 		});
 	};
 
-	if (gameStatus === GAME_STATUS.NOT_INITIALIZE) {
+	if (!isGameIDSet || gameStatus === GAME_STATUS.NOT_INITIALIZE) {
 		return (
 			<div className="team-container">
 				<Loading msg="Waiting for host to initialize the game..." />
@@ -94,7 +98,12 @@ function Game() {
 		);
 	}
 
-	if (questionDurations?.length === 0 || !gameStatus || !teamName) {
+	if (
+		questionDurations?.length === 0 ||
+		!gameStatus ||
+		!teamName ||
+		!currentCredit
+	) {
 		return (
 			<div className="team-container">
 				<Loading msg="Loading..." />
