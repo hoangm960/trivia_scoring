@@ -21,7 +21,7 @@ const LoginPage = () => {
 			.toLowerCase()
 			.replaceAll(" ", "_");
 
-		fetchData("/login", "PUT", { teamID: uid }, () => {
+		fetchData("login", "PUT", { teamID: uid }, () => {
 			localStorage.setItem("team", uid);
 			history.push("/game");
 		});
