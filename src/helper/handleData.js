@@ -5,6 +5,7 @@ export async function fetchData(
 	method = "GET",
 	body = null,
 	callBack = null,
+	alertError = true,
 	maxRetries = 3
 ) {
 	let attempts = 0;
@@ -26,16 +27,20 @@ export async function fetchData(
 				);
 				await new Promise(resolve => setTimeout(resolve, 2000));
 				continue;
-			} else if (
-				response.status === 404 ||
-				response.status === 409 ||
-				response.status === 422
-			) {
-				const data = await response.json();
-				return alert(data.error);
 			}
+
 			const data = await response.json();
 			if (!data) return;
+			if (
+				alertError &&
+				(response.status === 404 ||
+					response.status === 409 ||
+					response.status === 422)
+			) {
+				alert(data.error);
+				console.error(`Error request for ${url}: ${data.error}`);
+				return;
+			}
 			if (callBack) callBack(data);
 			return;
 		} catch (err) {
