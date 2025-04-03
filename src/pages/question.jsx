@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import Loading from "../components/loading";
 import { Answer } from "../components/radio_answer";
 import { fetchData } from "../helper/handleData";
+import { socket } from "../socket.js";
 
 function QuestionPage({
 	teamId,
@@ -11,7 +13,7 @@ function QuestionPage({
 	setAnswerSubmitted,
 }) {
 	const [selectedAnswer, setSelectedAnswer] = useState("E");
-	const [timeLeft, setTimeLeft] = useState(currentDuration);
+	const [timeLeft, setTimeLeft] = useState(null);
 
 	const handleAnswer = async answer => {
 		await fetchData(
@@ -28,25 +30,24 @@ function QuestionPage({
 		);
 	};
 
-	useEffect(() => {
-		const timerId = setInterval(() => {
-			setTimeLeft(time => {
-				if (time === 0) {
-					clearInterval(timerId);
-					handleAnswer(selectedAnswer);
-					return 0;
-				} else return time - 1;
-			});
-		}, 1000);
-		return () => clearInterval(timerId);
-		//eslint-disable-next-line
-	}, []);
-
 	const updateAnswer = value => {
 		if (value === selectedAnswer) return;
 		setSelectedAnswer(value);
 		handleAnswer(value);
 	};
+
+	useEffect(() => {
+		socket.on("timeLeft", setTimeLeft);
+		return () => socket.off("timeLeft", setTimeLeft);
+	}, []);
+
+	useEffect(() => {
+		if (timeLeft === 0) handleAnswer(selectedAnswer);
+	}, [timeLeft]);
+
+	if (timeLeft === null) {
+		return <Loading msg={"Loading..."}></Loading>;
+	}
 
 	return (
 		<>
