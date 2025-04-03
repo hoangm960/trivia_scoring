@@ -40,11 +40,11 @@
 	max-width: 1200px;
 	overflow-x: auto;
 	backdrop-filter: blur(8px);
+	border-radius: 5%;
 }
 
 .scoreboard-table {
 	width: 100%;
-	border-collapse: collapse;
 }
 
 .header-row th {
