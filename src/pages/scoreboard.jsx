@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./style/scoreboard.css";
 import Loading from "../components/loading";
 import logo from "../assets/stem_club_logo.png";
-import { GAME_STATUS } from "../constants/questionConst";
+import { GAME_STATUS } from "../constants/gameStatus.js";
 import Table from "../components/table_scoreboard";
 import { socket } from "../socket.js";
 import { fetchData } from "../helper/handleData.js";

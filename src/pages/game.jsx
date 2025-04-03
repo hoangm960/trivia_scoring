@@ -7,7 +7,7 @@ import { Button } from "../components/button";
 import { useHistory } from "react-router-dom";
 import LogOutIcon from "../assets/logout.png";
 import { socket } from "../socket.js";
-import { GAME_STATUS } from "../constants/questionConst.js";
+import { GAME_STATUS } from "../constants/gameStatus.js";
 import { fetchData } from "../helper/handleData.js";
 
 function Game() {
@@ -54,10 +54,12 @@ function Game() {
 		)
 			return;
 
+		if (!gameID) return;
+
 		fetchData("teamCredit", "POST", { teamID: teamId }, data => {
 			setCurrentCredit(data.credit);
 		});
-	}, [gameStatus, teamId]);
+	}, [gameStatus, teamId, gameID]);
 
 	useEffect(() => {
 		if (!gameID) return;
@@ -68,7 +70,10 @@ function Game() {
 	}, [gameID]);
 
 	useEffect(() => {
-		if (gameStatus === GAME_STATUS.SUMMARIZED) {
+		if (
+			gameStatus === GAME_STATUS.NOT_INITIALIZE ||
+			gameStatus === GAME_STATUS.SUMMARIZED
+		) {
 			setBetSubmitted(false);
 			setAnswerSubmitted(false);
 		}
