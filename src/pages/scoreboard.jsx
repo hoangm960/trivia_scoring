@@ -51,12 +51,17 @@ function Scoreboard() {
 	}, [gameStatus, currentQuestion, questionDurations]);
 
 	useEffect(() => {
-		if (timeLeft <= 0) return;
 		const timerId = setInterval(() => {
-			setTimeLeft(prev => prev - 1);
+			setTimeLeft(time => {
+				if (time === 0) {
+					clearInterval(timerId);
+					return 0;
+				} else return time - 1;
+			});
 		}, 1000);
 		return () => clearInterval(timerId);
-	}, [timeLeft]);
+		//eslint-disable-next-line
+	}, []);
 
 	return (
 		<div className="scoreboard-container">
