@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useCallback } from "react";
 import { Answer } from "../components/radio_answer";
 import { fetchData } from "../helper/handleData";
 
@@ -18,20 +17,20 @@ function QuestionPage({
 		setTimeLeft(currentDuration);
 	}, [currentDuration]);
 
-	const handleAnswer = useCallback(async () => {
+	const handleAnswer = async answer => {
 		await fetchData(
 			"answerQuestion",
 			"POST",
 			{
 				teamId,
-				answer: selectedAnswer,
+				answer: answer,
 			},
 			_ => {
 				setAnswerSubmitted(true);
-				console.log("Answer submitted:", selectedAnswer);
+				console.log("Answer submitted:", answer);
 			}
 		);
-	}, [teamId, selectedAnswer, setAnswerSubmitted]);
+	};
 
 	useEffect(() => {
 		if (timeLeft <= 0) {
@@ -45,7 +44,10 @@ function QuestionPage({
 	}, [timeLeft, handleAnswer]);
 
 	const updateAnswer = value => {
-		setSelectedAnswer(value);
+		if (value !== selectedAnswer) {
+			setSelectedAnswer(value);
+			handleAnswer(value);
+		}
 	};
 
 	return (
